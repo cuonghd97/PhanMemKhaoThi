@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 # Bảng lớp học
@@ -17,28 +17,32 @@ class Mon(models.Model):
 class DonVi(models.Model):
   MaDonVi = models.CharField(max_length = 20, unique = True)
   TenDonVi = models.TextField(max_length = 200)
-  QuanSo = models.IntegerField
+  QuanSo = models.IntegerField(default=0)
 
 # Bảng Người gồm Học viên và Cán bộ
-class Nguoi(models.Model):
+class Nguoi(AbstractUser):
   Ma = models.CharField(max_length = 20, unique = True)
   Ten = models.TextField(max_length = 200)
-  CapHam = models.TextField
+  CapHam = models.TextField(max_length=200, default='')
   NgaySinh = models.DateField
   GioiTinh = models.TextField(max_length = 200)
   ChucVu = models.TextField(max_length = 200)
+  role = models.IntegerField
+  class Meta:
+    managed = True
+    db_table = 'Nguoi'
 
 # Bảng Kỳ thi
 class KyThi(models.Model):
   MaKyThi = models.CharField(max_length = 20, unique = True)
   NgayThi = models.DateField
-  MonHoc = models.ForeignKey(Mon, on_delete = models.CASCADE)
+  MonHoc = models.ForeignKey(Mon, models.CASCADE)
   KhoaHoc = models.ForeignKey(LopHoc, on_delete = models.CASCADE)
 
 # Bảng Phòng thi
 class PhongThi(models.Model):
   MaPhong = models.CharField(max_length = 20, unique = True)
-  MaKyThi = models.ForeignKey(KyThi, on_delete = models.CASCADE)
+  MaKyThi = models.ForeignKey(KyThi, on_delete = models.CASCADE, null = True)
   HinhThucThi = models.TextField(max_length = 200)
   MaCanBoCoi1 = models.CharField(max_length = 20)
   MaCanBoCoi2 = models.CharField(max_length = 20)
@@ -49,15 +53,15 @@ class PhongThi(models.Model):
 # Bảng Chi tiết phòng
 class ChiTietPhong(models.Model):
   SBD = models.CharField(max_length = 20, unique = True)
-  MaPhong = models.ForeignKey(PhongThi, on_delete = models.CASCADE)
-  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE)
+  MaPhong = models.ForeignKey(PhongThi, on_delete = models.CASCADE, null = True)
+  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
   TrangThai = models.TextField(max_length = 200)
   Diem = models.IntegerField
   GhiChu = models.TextField(max_length = 200)
 
 # Bảng chi tiết lớp
 class ChiTietLop(models.Model):
-  MaLop = models.ForeignKey(LopHoc, on_delete = models.CASCADE)
-  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE)
-  Mon = models.ForeignKey(Mon, on_delete = models.CASCADE)
-  DonVi = models.ForeignKey(DonVi, on_delete = models.CASCADE)
+  MaLop = models.ForeignKey(LopHoc, on_delete = models.CASCADE, null = True)
+  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
+  Mon = models.ForeignKey(Mon, on_delete = models.CASCADE, null = True)
+  DonVi = models.ForeignKey(DonVi, on_delete = models.CASCADE, null = True)

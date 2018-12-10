@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'CoiThi'
 ]
 
+AUTH_USER_MODEL = 'CoiThi.Nguoi'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
