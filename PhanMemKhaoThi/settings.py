@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'adminkt',
 ]
 
+AUTH_USER_MODEL = 'CoiThi.Nguoi'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
