@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+import datetime
 # Create your models here.
 
 # Bảng lớp học
-class LopHoc(models.Model):
-  MaLop = models.CharField(max_length = 20, unique = True)
-  TenLop = models.TextField(max_length = 200)
-  KhoaHoc = models.TextField(max_length = 200)
+# class LopHoc(models.Model):
+#   MaLop = models.CharField(max_length = 20, unique = True)
+#   TenLop = models.TextField(max_length = 200)
+#   KhoaHoc = models.TextField(max_length = 200)
 
 # Bảng Môn
 class Mon(models.Model):
@@ -24,7 +26,7 @@ class Nguoi(AbstractUser):
   Ma = models.CharField(max_length = 20, unique = True)
   Ten = models.TextField(max_length = 200)
   CapHam = models.TextField(max_length=200, default='')
-  NgaySinh = models.DateField
+  NgaySinh = models.DateField(default=timezone.now)
   GioiTinh = models.TextField(max_length = 200)
   ChucVu = models.TextField(max_length = 200)
   role = models.IntegerField
@@ -35,9 +37,9 @@ class Nguoi(AbstractUser):
 # Bảng Kỳ thi
 class KyThi(models.Model):
   MaKyThi = models.CharField(max_length = 20, unique = True)
-  NgayThi = models.DateField
+  NgayThi = models.DateField(default=timezone.now)
   MonHoc = models.ForeignKey(Mon, models.CASCADE)
-  KhoaHoc = models.ForeignKey(LopHoc, on_delete = models.CASCADE)
+  KhoaHoc = models.TextField(max_length=200)
 
 # Bảng Phòng thi
 class PhongThi(models.Model):
@@ -48,7 +50,7 @@ class PhongThi(models.Model):
   MaCanBoCoi2 = models.CharField(max_length = 20)
   MaCanBoCham1 = models.CharField(max_length = 20)
   MaCanBoCham2 = models.CharField(max_length = 20)
-  NgayCham  = models.DateField
+  NgayCham  = models.DateField(default=timezone.now)
 
 # Bảng Chi tiết phòng
 class ChiTietPhong(models.Model):
@@ -60,8 +62,8 @@ class ChiTietPhong(models.Model):
   GhiChu = models.TextField(max_length = 200)
 
 # Bảng chi tiết lớp
-class ChiTietLop(models.Model):
-  MaLop = models.ForeignKey(LopHoc, on_delete = models.CASCADE, null = True)
-  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
-  Mon = models.ForeignKey(Mon, on_delete = models.CASCADE, null = True)
-  DonVi = models.ForeignKey(DonVi, on_delete = models.CASCADE, null = True)
+# class ChiTietLop(models.Model):
+#   MaLop = models.ForeignKey(LopHoc, on_delete = models.CASCADE, null = True)
+#   MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
+#   Mon = models.ForeignKey(Mon, on_delete = models.CASCADE, null = True)
+#   DonVi = models.ForeignKey(DonVi, on_delete = models.CASCADE, null = True)
