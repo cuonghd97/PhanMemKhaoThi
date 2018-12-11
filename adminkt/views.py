@@ -1,5 +1,10 @@
 from django.shortcuts import render
-
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect,JsonResponse
+from django.views import View
+from django.contrib.auth import authenticate, login, decorators, logout, get_user
+from django.shortcuts import redirect
+from django.conf import settings
+from CoiThi import models
 # Create your views here.
 def home(request):
     # user = request.user
@@ -18,8 +23,16 @@ def data_lop(request):
 def parse_canbo(request):
     return render(request,'adminkt/parse_canbo.html')
 
-def data_kithi(request):
+def kithi(request):
     return render(request,'adminkt/manager_kithi.html')
+
+def data_canbo(request):
+    return render(request,'adminkt/manager_canbo.html')
 
 def thongke(request):
     return render(request,'adminkt/thongke.html')
+
+def data_kithi(request):
+    tblkithi = models.KyThi.objects.all().values()
+    listdata = list(tblkithi)
+    return JsonResponse(listdata,safe=False)
