@@ -1,0 +1,46 @@
+{% extends 'adminkt/base.html' %}
+{% load staticfiles%}
+{% block title %}
+Quản lý kì thi
+{% endblock title %}
+{% block body %}
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Quản lý kì thi</h3>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Danh sách kì thi </h2>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <!-- <p class="text-muted font-13 m-b-30">
+            The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. The core library provides the based framework upon which plug-ins can built.
+          </p> -->
+            <table id="quanlykithi" class="table table-striped table-bordered dataTable no-footer dtr-inline" role="grid" aria-describedby="datatable-buttons_info" style="width: 966px;">
+            <thead>
+              <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 146px;" aria-sort="ascending" aria-label="Name: activate to sort column descending">ID</th>
+                <th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 233px;" aria-label="Position: activate to sort column ascending">Mã kì thi</th>
+                <th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 109px;" aria-label="Office: activate to sort column ascending">Môn ID</th>
+                <th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 55px;" aria-label="Age: activate to sort column ascending">Khóa học ID</th>
+              </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+          </table>
+        </div>  
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block js %}
+<script src="{% static 'build/js/adminkt/manager_kithi.js' %}"></script>
+{% endblock js %}
