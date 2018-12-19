@@ -4,66 +4,124 @@ from django.utils import timezone
 import datetime
 # Create your models here.
 
-# Bảng lớp học
-# class LopHoc(models.Model):
-#   MaLop = models.CharField(max_length = 20, unique = True)
-#   TenLop = models.TextField(max_length = 200)
-#   KhoaHoc = models.TextField(max_length = 200)
+# Bảng khóa học
+class KhoaHoc(models.Model):
+  tenKhoaHoc = models.TextField(max_length=200, null=True)
+  maKhoaHoc = models.CharField(max_length=100, null=True)
+  he = models.TextField(max_length=200, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'khoa_hoc'
 
 # Bảng Môn
 class Mon(models.Model):
-  MaMon = models.CharField(max_length = 20, unique = True)
-  TenMon = models.TextField(max_length = 200)
+  maMon = models.CharField(max_length = 20, unique = True, null=True)
+  tenMon = models.TextField(max_length = 200, null=True)
 
-# Bảng đơn vị
-class DonVi(models.Model):
-  MaDonVi = models.CharField(max_length = 20, unique = True)
-  TenDonVi = models.TextField(max_length = 200)
-  QuanSo = models.IntegerField(default=0)
-
-# Bảng Người gồm Học viên và Cán bộ
-class Nguoi(AbstractUser):
-  Ma = models.CharField(max_length = 20, unique = True)
-  Ten = models.TextField(max_length = 200)
-  CapHam = models.TextField(max_length=200, default='')
-  NgaySinh = models.DateField(default=timezone.now)
-  GioiTinh = models.TextField(max_length = 200)
-  ChucVu = models.TextField(max_length = 200)
-  role = models.IntegerField
   class Meta:
     managed = True
-    db_table = 'Nguoi'
+    db_table = 'mon'
 
-# Bảng Kỳ thi
+# Bảng Đơn Vị
+class DonVi(models.Model):
+  tenDonVi = models.TextField(max_length=200, null=True)
+  maDonVi = models.CharField(max_length=100, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'don_vi'
+
+# Bảng Cán Bộ
+class CanBo(AbstractUser):
+  tenCanBo = models.TextField(max_length=200, null=True)
+  maCanBo = models.CharField(max_length=100, null = True)
+  quanHam = models.TextField(max_length=200, null=True)
+  maDonVi = models.ForeignKey(DonVi, models.SET_NULL, null=True)
+  position = models.IntegerField(default=0)
+  # position = 0: Admin
+  # position = 1: Coi Thi
+  # position = 2: Cham Thi
+  class Meta:
+    managed = True
+    db_table = 'can_bo'
+
+# Bảng Sinh Viên
+class SinhVien(models.Model):
+  maSinhVien = models.CharField(max_length=100, null=True)
+  tenSinhVien = models.TextField(max_length=200, null=True)
+  tuoi = models.IntegerField(default=0)
+  maDonVi = models.ForeignKey(DonVi, models.SET_NULL, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'sinh_vien'
+
+# Bảng Lớp Học
+class LopHoc(models.Model):
+  maLop = models.CharField(max_length=100, null=True)
+  tenLop = models.TextField(max_length=200, null=True)
+  maKhoa = models.ForeignKey(KhoaHoc, models.CASCADE, null=True)
+  maMon = models.ForeignKey(Mon, models.CASCADE, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'lop_hoc'
+
+# Bảng Chi Tiết Lớp
+class ChiTietLop(models.Model):
+  maLop = models.ForeignKey(LopHoc, models.CASCADE, null=True)
+  maSinhVien = models.ForeignKey(SinhVien, models.CASCADE, null=True)
+  diem = models.IntegerField(default=0)
+  trangThai = models.TextField(max_length=200, null=True)
+  lyDo = models.TextField(max_length=200, null=True)
+  ghiChu = models.TextField(max_length=200, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'chi_tiet_lop'
+
+# Bảng Chi Tiết Khóa
+class ChiTietKhoa(models.Model):
+  maKhoa = models.ForeignKey(KhoaHoc, models.CASCADE, null=True)
+  maLop = models.ForeignKey(LopHoc, models.CASCADE, null=True)
+
+  class Meta:
+    managed = True
+    db_table = 'chi_tiet_khoa'
+
+# Bảng Kỳ Thi
 class KyThi(models.Model):
-  MaKyThi = models.CharField(max_length = 20, unique = True)
-  NgayThi = models.DateField(default=timezone.now)
-  MonHoc = models.ForeignKey(Mon, models.CASCADE)
-  KhoaHoc = models.TextField(max_length=200)
+  maKyThi = models.CharField(max_length=100, null=True)
+  tenKyThi = models.TextField(max_length=200, null=True)
+  ngayBatDau = models.DateField(default=timezone.now)
+  ngayKetThuc = models.DateField(default=timezone.now)
 
-# Bảng Phòng thi
+  class Meta:
+    managed = True
+    db_table = 'ky_thi'
+
+# Phòng Thi
 class PhongThi(models.Model):
-  MaPhong = models.CharField(max_length = 20, unique = True)
-  MaKyThi = models.ForeignKey(KyThi, on_delete = models.CASCADE, null = True)
-  HinhThucThi = models.TextField(max_length = 200)
-  MaCanBoCoi1 = models.CharField(max_length = 20)
-  MaCanBoCoi2 = models.CharField(max_length = 20)
-  MaCanBoCham1 = models.CharField(max_length = 20)
-  MaCanBoCham2 = models.CharField(max_length = 20)
-  NgayCham  = models.DateField(default=timezone.now)
+  maPhong = models.CharField(max_length=100, null=True)
+  viTri = models.CharField(max_length=100, null=True)
+  ngayThi = models.DateField(default=timezone.now)
+  gio = models.DateTimeField(default=timezone.now)
+  maLop = models.ForeignKey(LopHoc, models.CASCADE, null=True)
+  canBoCoi1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi1', null=True)
+  canBoCoi2 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi2', null=True)
 
-# Bảng Chi tiết phòng
-class ChiTietPhong(models.Model):
-  SBD = models.CharField(max_length = 20, unique = True)
-  MaPhong = models.ForeignKey(PhongThi, on_delete = models.CASCADE, null = True)
-  MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
-  TrangThai = models.TextField(max_length = 200)
-  Diem = models.IntegerField
-  GhiChu = models.TextField(max_length = 200)
+  class Meta:
+    managed = True
+    db_table = 'phong_thi'
 
-# Bảng chi tiết lớp
-# class ChiTietLop(models.Model):
-#   MaLop = models.ForeignKey(LopHoc, on_delete = models.CASCADE, null = True)
-#   MaHocVien = models.ForeignKey(Nguoi, on_delete = models.CASCADE, null = True)
-#   Mon = models.ForeignKey(Mon, on_delete = models.CASCADE, null = True)
-#   DonVi = models.ForeignKey(DonVi, on_delete = models.CASCADE, null = True)
+# Bảng Chấm Thi
+class ChamThi(models.Model):
+  maPhong = models.ForeignKey(PhongThi, models.CASCADE, null=True)
+  canBoCham1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCham1', null=True)
+  canBoCham2 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCham2', null=True)
+  ngayCham = models.DateField(default=timezone.now)
+
+  class Meta:
+    managed = True
+    db_table = 'cham_thi'

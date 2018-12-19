@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'adminkt',
 ]
 
-AUTH_USER_MODEL = 'CoiThi.Nguoi'
+AUTH_USER_MODEL = 'CoiThi.CanBo'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

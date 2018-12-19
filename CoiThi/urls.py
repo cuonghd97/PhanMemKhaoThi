@@ -6,7 +6,7 @@ app_name = 'CoiThi'
 
 urlpatterns = [
   path('login/', views.LoginClass.as_view(), name='login'),
-  path('quan-ly/', views.index, name = 'home'),
+  path('coi-thi/', views.coithi, name = 'coithi'),
+  path('cham-thi/', views.chamthi, name = 'chamthi'),
   path('logout/', views.user_logout, name = 'logout'),
-  path('base/', views.base)
 ]
