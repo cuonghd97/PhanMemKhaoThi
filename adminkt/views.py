@@ -22,15 +22,26 @@ def data_lop(request):
         return redirect('CoiThi:login')
     return render(request, 'adminkt/manager_lop.html')
     
-def parse_canbo(request):
+def manage_khoa(request):
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
-    return render(request,'adminkt/parse_canbo.html')
+    return render(request,'adminkt/manage_khoa.html')
+
+def manage_mon(request):
+    if not request.user.is_authenticated:
+        return redirect('CoiThi:login')
+    return render(request,'adminkt/manage_mon.html')
 
 def kithi(request):
     # if not request.user.is_authenticated:
     #     return redirect('CoiThi:login')
     return render(request,'adminkt/manager_kithi.html')
+
+def manage_hocvien(request):
+    # if not request.user.is_authenticated:
+    #     return redirect('CoiThi:login')
+    return render(request,'adminkt/manage_hocvien.html')
+
 def create_kithi(request):
     return render(request,'adminkt/create_kithi.html')
 def data_canbo(request):
@@ -44,6 +55,27 @@ def thongke(request):
     return render(request,'adminkt/thongke.html')
 def data_mon(request):
     return False
+def manager_kithi(request):
+    user = request.user
+    if user.is_authenticated:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                KyThi.objects.get(id=request.POST['delete']).delete()
+            else:
+                if request.POST['kieu'] == 'new':
+                    try:
+                        KyThi.objects.create(MaKyThi=request.POST['ten'], lop=request.POST['lop'], mo_ta=request.POST['mo_ta'])
+                    except:
+                        pass
+                else:
+                    m = Mon.objects.get(id=request.POST['id'])
+                    m.ten = request.POST['ten']
+                    m.lop = request.POST['lop']
+                    m.mo_ta = request.POST['mo_ta']
+                    m.save()
+        return render(request, 'adminsc/manage_mon.html', content)
+    else:
+        return HttpResponseRedirect('/')
 def data_kithi(request):
     # if not request.user.is_authenticated:
     #     return redirect('CoiThi:login')
