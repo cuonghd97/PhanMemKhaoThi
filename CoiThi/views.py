@@ -30,6 +30,8 @@ class LoginClass(View):
       return redirect('CoiThi:coithi')
     elif CanBo.position == 2:
       return redirect('CoiThi:chamthi')
+    elif CanBo.position == 0:
+      return redirect('adminkt:trangchu')
 
 # Trang coi thi
 def coithi(request):
