@@ -11,6 +11,11 @@ from . import models
 import datetime
 # Create your views here.
 
+# Redirect login
+def direct(request):
+  return redirect('CoiThi:login')
+
+# Login
 class LoginClass(View):
   def get(self, request):
     return render(request, 'coithi/login.html')
@@ -30,7 +35,17 @@ class LoginClass(View):
 def coithi(request):
   if not request.user.is_authenticated:
     return redirect('CoiThi:login')
-  return render(request, 'coithi/coithi.html')
+  data = {'name': request.user.tenCanBo}
+  return render(request, 'coithi/coithi.html', data)
+
+# Data danh sach phong thi
+def dataPhongThi(request):
+  data = []
+
+  pt = models.PhongThi.objects.get(id = 5)
+  tencb =  pt.canBoCoi1.tenCanBo
+  data.append([tencb])
+  return JsonResponse(data, safe=False)
 
 # Trang cham thi
 def chamthi(request):
