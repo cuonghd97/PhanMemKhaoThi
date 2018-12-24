@@ -1,40 +1,143 @@
 {% extends 'adminkt/base.html' %}
 {% block title %}
-Quản lý cán bộ
+Quản cán bộ
 {% endblock title %}
+{% load staticfiles %}
 {% block body %}
 <div class="">
-  <div class="page-title">
-    <div class="title_left">
-      <h3>Quản lý cán bộ</h3>
-    </div>
-  </div>
-
-  <div class="clearfix"></div>
   <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="x_panel">
         <div class="x_title">
           <h2>Danh sách cán bộ </h2>
+          <button class="btn btn btn-round btn-primary" style="float:right;" data-toggle="modal" data-target="#new_teacher_multi"
+            data-title="new">
+            <i class="fa fa-users"></i> Thêm nhiều cán bộ
+          </button>
+          <button class="btn btn-round btn-primary" style="float:right;" data-toggle="modal" data-target="#new_teacher"
+            data-title="new">
+            <i class="fa fa-user-plus"></i> Thêm cán bộ
+          </button>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
-          <!-- <p class="text-muted font-13 m-b-30">
-            The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. The core library provides the based framework upon which plug-ins can built.
-          </p> -->
-            <table id="datatable-buttons" class="table table-striped table-bordered dataTable no-footer dtr-inline" role="grid" aria-describedby="datatable-buttons_info" style="width: 966px;">
-            <thead>
-              <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 146px;" aria-sort="ascending" aria-label="Name: activate to sort column descending">Name</th><th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 233px;" aria-label="Position: activate to sort column ascending">Position</th><th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 109px;" aria-label="Office: activate to sort column ascending">Office</th><th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 55px;" aria-label="Age: activate to sort column ascending">Age</th><th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 107px;" aria-label="Start date: activate to sort column ascending">Start date</th><th class="sorting" tabindex="0" aria-controls="datatable-buttons" rowspan="1" colspan="1" style="width: 83px;" aria-label="Salary: activate to sort column ascending">Salary</th></tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>  
+          <div>
+            <table class="table table-striped jambo_table bulk_action" id="list_canbo" width="100%">
+              <thead>
+                <tr>
+                  <th>Họ tên</th>
+                  <th>Mã cán bộ</th>
+                  <th>QUân hàm</th>
+                  <th>Đơn vị</th>
+                  <th>Tên đăng nhập</th>
+                  <th>Trạng thái</th>
+                  <th>Tùy chọn</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<div class="modal" id="new_teacher" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="teacher_title">Thêm mới cán bộ</h4>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        <input type="hidden" name="gvid">
+        <input type="hidden" name="kieu">
+
+        <div class="col-md-12 form-group has-feedback">
+          <input type="text" class="form-control has-feedback-left" name="fullname" placeholder="Họ tên" required>
+          <span class="fa fa-font form-control-feedback left" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-md-12 form-group has-feedback">
+          <input type="text" class="form-control has-feedback-left" name="username" placeholder="Tên đăng nhập"
+            required>
+          <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-md-12 form-group has-feedback">
+          <input type="email" class="form-control has-feedback-left" name="email" placeholder="Email" required>
+          <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-md-12 form-group has-feedback passwd">
+          <input type="password" class="form-control has-feedback-left" name="password" placeholder="Mật khẩu" required>
+          <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-md-12 form-group has-feedback passwd">
+          <input type="password" class="form-control has-feedback-left" name="password2" placeholder="Nhập lại mật khẩu"
+            required>
+          <span class="fa fa-repeat form-control-feedback left" aria-hidden="true"></span>
+        </div>
+        <div class="col-md-12 form-group has-feedback">
+          <input type="text" class="form-control has-feedback-left" name="quanham" placeholder="Nhập quân hàm cán bộ"
+            required>
+          <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+        </div>
+        <div class="col-md-12 form-group has-feedback">
+          <input type="text" class="form-control has-feedback-left" name="macanbo" placeholder="Nhập mã cán bộ"
+            required>
+          <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-md-12 form-group has-feedback">
+          <input list ="ls" class="form-control  has-feedback-left" type="text" id="donvi" name="donvi" placeholder="Đơn vị">
+          <span class="fa fa-home form-control-feedback left" aria-hidden="true"></span>
+          <datalist id="ls">
+            {% for k in ds_donvi %}
+            <option data-donvi="{{k.id}}">{{k.tenDonVi}} </option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="create_new_teacher">Tạo mới</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="close_new_teacher">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="new_teacher_multi" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Nhập dữ liệu theo mẫu dưới</h4>
+      </div>
+      <div class="modal-body">
+        <img style="border: 1px solid; border-radius: 10px;" src="{% static 'images/canbo.png' %}" width="100%">
+        <br>
+        <br>
+        <input type="file" name="file" id="file" class="form-control">
+        <div class="clearfix"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="create_new_teacher_multi">Upload</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock body %}
 {% block js %}
-
+<script src="{% static 'build/js/adminkt/xlsx.full.min.js' %}"></script>
+<script src="{% static 'build/js/adminkt/manager_canbo.js' %}"></script>
 {% endblock js %}
