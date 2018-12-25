@@ -43,11 +43,18 @@ def coithi(request):
 # Data danh sach phong thi
 def dataPhongThi(request):
   data = []
-
-  pt = models.PhongThi.objects.get(id = 5)
-  tencb =  pt.canBoCoi1.tenCanBo
-  data.append([tencb])
-  return JsonResponse(data, safe=False)
+  danhsachphongthi = models.PhongThi.objects.all()
+  for item in danhsachphongthi:
+    row = []
+    row.append([item.maLop.maSinhVien.tenSinhVien])
+    row.append([item.canBoCoi1.tenCanBo])
+    row.append([item.canBoCoi2.tenCanBo])
+    row.append([item.ngayThi])
+    row.append([item.maKyThi.ngayBatDau])
+    row.append([item.maKyThi.ngayKetThuc])
+    data.append(row)
+  datas = {"data": data}
+  return JsonResponse(datas, safe=False)
 
 # Trang cham thi
 def chamthi(request):
