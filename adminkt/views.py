@@ -13,12 +13,113 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
     return render(request, 'adminkt/index.html')
+def manage_class(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                LopHoc.objects.get(id=request.POST['delete']).delete()
+            elif 'ten' in request.POST:
+                # nien_khoa, nam = request.POST['nien_khoa'].split(" - ")
+                if request.POST['kieu'] == 'new':
+                    # try:
+                    # print(request.POST['ten'])
+                    LopHoc.objects.create(tenLop=request.POST['ten'],maKhoa=KhoaHoc.objects.get(id =request.POST['khoa']),maMon = Mon.objects.get(id = request.POST['mon']))
+                    # except:
+                    #     pass
+                else:
+                    l = LopHoc.objects.get(id=request.POST['id'])
+                    l.tenLop = request.POST['ten']
+                    l.maKhoa = KhoaHoc.objects.get(id=request.POST['khoa'])
+                    l.maMon = Mon.objects.get(id = request.POST['mon'])
+                    l.save()
+                
+        content = {'username': user.username, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all()}
+        return render(request, 'adminkt/manager_lop.html', content)
+    else:
+        return HttpResponseRedirect('/')
 
-def data_lop(request):
-    if not request.user.is_authenticated:
-        return redirect('CoiThi:login')
-    return render(request, 'adminkt/manager_lop.html')
-    
+
+def manage_class_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        data = []
+        for lop in LopHoc.objects.all():
+            ten = '<p id="ten_{}">{}</p>'.format(lop.id, lop.tenLop)
+            khoa = '<p id="khoa_{}">{} - {}</p>'.format(lop.id, lop.maKhoa.tenKhoaHoc,lop.maKhoa.he)
+            mon = '<p id="mon_{}">{}</p>'.format(lop.id, lop.maMon.tenMon)
+            # nien_khoa = '<p id="nien_khoa_{}">{}</p>'.format(lop.id, lop.nien_khoa_id.ten_nien_khoa + ' - ' + str(lop.nien_khoa_id.nam_hoc))
+            # ls_chi_tiet = ChiTietLop.objects.filter(id=lop).values()
+            # gv = '''
+            # {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_teacher"></i> 
+            # '''.format(lop.ten, MyUser.objects.filter(id__in=ls_chi_tiet, position=1).count())
+           
+            hs = '''
+            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_student"></i> 
+            '''.format(lop.tenLop,LopHoc.objects.filter(maLop = id).count())
+            options = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
+                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
+                    </button> 
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+            '''.format(lop.id)
+            data.append([ten,mon, khoa,hs, options])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+
+
+def manage_donvi(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                DonVi.objects.get(id=request.POST['delete']).delete()
+            elif 'ten' in request.POST:
+                # nien_khoa, nam = request.POST['nien_khoa'].split(" - ")
+                if request.POST['kieu'] == 'new':
+                    try:
+                        print(request.POST['ma'])
+                        DonVi.objects.create(tenDonVi=request.POST['ten'],maDonVi=request.POST['ma'])
+                    except:
+                        pass
+                else:
+                    l = DonVi.objects.get(id=request.POST['id'])
+                    l.tenDonVi = request.POST['ten']
+                    l.maDonVi = request.POST['ma']
+                    l.save()
+                
+        content = {'username': user.username}
+        return render(request, 'adminkt/manager_donvi.html', content)
+    else:
+        return HttpResponseRedirect('/')
+
+def manage_donvi_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        data = []
+        for dv in DonVi.objects.all():
+            ten = '<p id="ten_{}">{}</p>'.format(dv.id, dv.tenDonVi)
+            Madv = '<p id="ma_{}">{}</p>'.format(dv.id, dv.maDonVi)
+            options = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
+                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
+                    </button> 
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+            '''.format(dv.id)
+            data.append([ten,Madv,options])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+
 def manage_khoa(request):
     user = request.user
     content = {'username': user.tenCanBo}
@@ -109,22 +210,182 @@ def manage_mon_data(request):
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
 
-def kithi(request):
-    # if not request.user.is_authenticated:
-    #     return redirect('CoiThi:login')
-    return render(request,'adminkt/manager_kithi.html')
 
 def manage_hocvien(request):
-    # if not request.user.is_authenticated:
-    #     return redirect('CoiThi:login')
-    return render(request,'adminkt/manager_hocvien.html')
+    user = request.user
+    content = {'username': user.username, 'ds_donvi': DonVi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                SinhVien.objects.get(id=request.POST['delete']).delete()
+            elif 'fullname' in request.POST:
+                if request.POST['kieu'] == 'new':
+                    try:
+                        SinhVien.objects.create(tenSinhVien=request.POST['fullname'],
+                                                    maSinhVien =request.POST['ma'],
+                                                    tuoi=request.POST['tuoi'],
+                                                    maDonVi=DonVi.objects.get(id = request.POST['donvi']))
+                            # new_lop = Lop.objects.get(ten=request.POST['list_lop'])
+                            # ChiTietLop.objects.create(lop_id=new_lop, myuser_id=hs)
+                    except:
+                        pass
+                else:
+                    # try:
+                    hs = SinhVien.objects.get(id =request.POST['id'])
+                    hs.tenSinhVien = request.POST['fullname']
+                    hs.maSinhVien = request.POST['ma']
+                    hs.tuoi = request.POST['tuoi']
+                    hs.maDonVi = DonVi.objects.get(id = request.POST['donvi']) 
+                    hs.save()
 
+                        # lop = ChiTietLop.objects.get(myuser_id=hs)
+                        # lop.lop_id = Lop.objects.get(ten=request.POST['list_lop'])
+                        # lop.save()
+                    # except:
+                    #     pass
+            else:
+                list_student = request.POST['list_student']
+                list_student = json.loads(list_student)
+                for stu in list_student:
+                    if stu is None:
+                        continue
+                    try:
+                        SinhVien.objects.create(tenSinhVien=stu[0],
+                                                    maSinhVien =stu[1],
+                                                    tuoi= int(stu[2]),
+                                                    maDonVi=DonVi.objects.get(id = stu[3]))
+                    except:
+                        continue
+        return render(request, 'adminkt/manager_hocvien.html', content)
+    else:
+        return HttpResponseRedirect('/')
+    
+def manage_hocvien_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_student = SinhVien.objects.all()
+        data = []
+        for sv in ls_student:
+            fullname = '<p id="full_{0}">{1}</p>'.format(sv.id, sv.tenSinhVien)
+            masv = '<p id="ma_{}">{}</p>'.format(sv.id,sv.maSinhVien)
+            tuoi = '<p id="tuoi_{}">{}</p>'.format(sv.id,sv.tuoi)
+            donvi = '<p id="donvi_{0}">{1}</p>'.format(sv.id,sv.maDonVi.tenDonVi)
+            options = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_student" data-title="edit" id="edit_{0}">
+                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
+                    </button>  
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+            '''.format(sv.id)
+            data.append([fullname, masv, tuoi, donvi, options])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
 def create_kithi(request):
     return render(request,'adminkt/create_kithi.html')
-def data_canbo(request):
+def manager_canbo(request):
+    user = request.user
+    content = {'username':user.username, 'ds_donvi':DonVi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                CanBo.objects.get(id=request.POST['delete']).delete()
+            elif 'block' in request.POST:
+                gv = CanBo.objects.get(id=request.POST['block'])
+                if gv.is_active:
+                    gv.is_active = False
+                else:
+                    gv.is_active = True
+                gv.save()
+            elif 'fullname' in request.POST:
+                if request.POST['kieu'] == 'new':
+                    try:
+                        gv = CanBo.objects.create(email=request.POST['email'],
+                                            tenCanBo=request.POST['fullname'],
+                                            username=request.POST['username'],
+                                            password=request.POST['password'],
+                                            quanHam =request.POST['quanham'],
+                                            maDonVi = DonVi.objects.get(id = request.POST['donvi']),
+                                            maCanBo=request.POST['macanbo'])
+                    except:
+                        pass
+                else:
+                    try:
+                        gv = CanBo.objects.get(username=request.POST['username'])
+                        gv.tenCanBo = request.POST['fullname']
+                        gv.quanHam = request.POST['quanham']
+                        gv.email = request.POST['email']
+                        gv.maCanBo = request.POST['macanbo']
+                        gv.maDonVi = DonVi.objects.get(id = request.POST['donvi'])
+                        
+                        gv.save()
+                    except:
+                        pass
+            else:
+                list_teacher = request.POST['list_canbo']
+                list_teacher = json.loads(list_teacher)
+                for i, tea in enumerate(list_teacher):
+                    if len(tea) == 0:
+                        continue
+                    try:
+                        CanBo.objects.create(email=tea[2],
+                                            tenCanBo=tea[0],
+                                            maCanBo=tea[5],
+                                            quanHam=tea[4],
+                                            username=tea[1],
+                                            password=tea[3],
+                                            maDonVi= DonVi.objects.get(id =tea[6]))
+                    except:
+                        continue
+
+        return render(request, 'adminkt/manager_canbo.html', content)
+    else:
+        return HttpResponseRedirect('/')
+def manage_canbo_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_teacher = CanBo.objects.filter()
+        data = []
+        for teacher in ls_teacher:
+            fullname = '<p id="full_{0}">{1}</p>'.format(teacher.id, teacher.tenCanBo)
+            username = '<p id="user_{0}">{1}</p>'.format(teacher.id, teacher.username)
+            macanbo = '<p id="macb_{0}">{1}</p>'.format(teacher.id, teacher.maCanBo)
+            quanham = '<p id="quanham_{0}">{1}</p>'.format(teacher.id, teacher.quanHam)
+            donvi = '<p id="donvi_{0}">{1}</p>'.format(teacher.id,teacher.maDonVi.tenDonVi)
+            trang_thai = ''
+            if(teacher.is_active):
+                icon = 'fa fa-lock'
+                title = 'khóa'
+                trang_thai = '<span class="label label-success">kích hoạt</span>'
+            else:
+                icon = 'fa fa-unlock'
+                title = 'mở khóa'
+                trang_thai = '<span class="label label-danger">khóa</span>'
+            options = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_teacher" data-title="edit" id="edit_{0}">
+                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
+                    </button> 
+                    <button type="button" class="btn btn-warning" data-title="block" id="block_{0}">
+                        <i class="{2}" data-toggle="tooltip" title="{3}"></i></i>
+                    </button> 
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+                <p hidden id="email_{0}">{1}</p>
+            '''.format(teacher.id, teacher.email, icon, title)
+            data.append([fullname, macanbo, quanham, donvi, username, trang_thai, options])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+def kithi(request):
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
-    return render(request,'adminkt/manager_canbo.html')
+    return render(request,'adminkt/manager_kithi.html')
 
 def thongke(request):
     if not request.user.is_authenticated:
@@ -158,7 +419,6 @@ def data_kithi(request):
     #     return redirect('CoiThi:login')
     tblkithi = KyThi.objects.all()
     tblmon =  Mon.objects.all()
-    # listdata = list(tblkithi)
     data = []
     for kithi in tblkithi:
         makithi = '<p id="makithi_{0}">{1}</p>'.format(kithi.MaKyThi,kithi.MaKyThi)

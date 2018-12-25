@@ -2,6 +2,129 @@
 {% block title %}
 Quản lý học viên
 {% endblock title %}
+{% load staticfiles %}
 {% block body %}
-Quản lý học viên
+<div class="">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+              <h2>Danh sách sinh viên </h2>
+              <!-- <input list="ls" id="data_lop">
+              <datalist id="ls">
+                  {% for l in ds_lop %}
+                  <option value="{{l.ten}}">
+                  {% endfor %}
+                  <option value="Tất cả">
+              </datalist> -->
+              <!-- <button class="btn btn-xs btn-primary btn-round" id="btn_filter" onclick="change();">
+                  <i class="fa fa-refresh"></i>
+              </button> -->
+
+              <button class="btn btn-round btn-primary"  style="float:right;" data-toggle="modal" data-target="#new_student_multi" data-title="new">
+                  <i class="fa fa-users"></i> Thêm nhiều sinh sinh
+              </button>
+
+              <button class="btn btn-round btn-primary"  style="float:right;" data-toggle="modal" data-target="#new_student" data-title="new">
+                  <i class="fa fa-user-plus"></i> Thêm sinh sinh
+              </button>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="x_content">
+
+            <div>
+              <table class="table table-striped jambo_table bulk_action" id="list_student" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Họ tên</th>
+                      <th>Mã sinh viên</th>
+                      <th>Tuổi</th>
+                      <th>Đơn vị</th>
+                      <th>Tùy chọn</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="new_student" role="dialog">
+<div  class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="new_student_title">Thêm mới sinh viên</h4>
+      </div>
+      <div class="modal-body">
+          {% csrf_token %}
+          <input type="hidden" name="id">
+          <input type="hidden" name="kieu">
+
+          <div class="col-md-12 form-group has-feedback">
+            <input type="text" class="form-control has-feedback-left" name="fullname" placeholder="Họ tên" required>
+            <span class="fa fa-font form-control-feedback left" aria-hidden="true"></span>
+          </div>
+          <div class="col-md-12 form-group has-feedback">
+            <input type="text" class="form-control has-feedback-left" name="masv" placeholder="Mã sinh viên" required>
+            <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+          </div>
+          <div class="col-md-12 form-group has-feedback">
+            <input type="number" class="form-control has-feedback-left" min='0' max = '100' value="20" name="tuoi" placeholder="Tuổi" required>
+              <span class="fa fa-birthday-cake form-control-feedback left" aria-hidden="true"></span>
+          </div>
+          <div class="col-md-12 form-group has-feedback">
+              <input list="ls" type="text" class="form-control has-feedback-left" id="donvi" name="donvi" placeholder="Đơn vị" required>
+              <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+              <datalist id="ls">
+                {% for k in ds_donvi %}
+                <option data-donvi="{{k.id}}">{{k.tenDonVi}} </option>
+                {% endfor %}
+              </datalist>
+          </div>
+
+          <div class="clearfix"></div>
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="btn btn-primary"  id="create_new_student">Tạo mới</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal" id="close_new_student">Đóng</button>
+      </div>
+  </div>
+</div>
+</div>
+
+<div class="modal" id="new_student_multi" role="dialog">
+<div  class="modal-dialog">
+  <!-- Modal content-->
+  <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Nhập dữ liệu theo mẫu dưới</h4>
+      </div>
+      <div class="modal-body">
+          <img style="border: 1px solid; border-radius: 10px;" src="{% static '/images/hocvien.png' %}" width="100%">
+          <br>
+          <br>
+          <input type="file" name="file" id="file" class="form-control">
+          <div class="clearfix"></div>
+      </div>
+
+      <div class="modal-footer">
+         <button type="button" class="btn btn-primary"  id="create_new_student_multi">Upload</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+      </div>
+  </div>
+</div>
+</div>
 {% endblock body %}
+{% block js %}
+    <script src="{% static 'build/js/adminkt/xlsx.full.min.js' %}"></script>
+    <script src="{% static 'build/js/adminkt/manager_hocvien.js' %}"></script>
+{% endblock js %}

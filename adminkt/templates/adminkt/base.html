@@ -39,8 +39,8 @@
                     <img src="../../images/img.jpg" alt="..." class="img-circle profile_img">
                   </div>
                   <div class="profile_info">
-                    <span>Welcome,</span>
-                    <h2>John Doe</h2>
+                    <span>Xin chào,</span>
+                    <h2>{{username}}</h2>
                   </div>
                 </div>
                 <!-- /menu profile quick info -->
@@ -71,6 +71,10 @@
                           </a>
                       </li>
                       <li>
+                        <a href="{% url 'adminkt:manage_donvi' %}"><i class="fa fa-user-plus"></i> Quản lý đơn vị
+                        </a>
+                      </li>
+                      <li>
                         <a href="{% url 'adminkt:quanly_kithi' %}"><i class="fa fa-desktop"></i> Quản lý kì thi
                         </a>
                       </li>
@@ -95,7 +99,6 @@
                             <li><a href="#">Thống kế học viên vi phạm </a></li>
                             <li><a href="#">Thống kê học viên trượt </a></li>
                             <li><a href="#">Thống kê học viên chưa thi KTHP </a></li>
-
                           </ul>
                         </a>
                       </li>
@@ -117,7 +120,7 @@
                   <ul class="nav navbar-nav navbar-right">
                     <li class="">
                       <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="images/img.jpg" alt="">John Doe
+                        <img src="images/img.jpg" alt="">{{username}}
                         <span class=" fa fa-angle-down"></span>
                       </a>
                       <ul class="dropdown-menu dropdown-usermenu pull-right">
