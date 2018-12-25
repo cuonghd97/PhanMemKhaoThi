@@ -16,7 +16,7 @@ urlpatterns = [
   path('manage_hocvien/', views.manage_hocvien, name = 'manage_hocvien'),
   path('manage_hocvien_data/', views.manage_hocvien_data),
 
-  path('quan_ly_ki_thi/data', views.data_kithi),
+  path('quan_ly_ki_thi_data/', views.manage_kithi_data),
   path('quan_ly_ki_thi/data_mon', views.data_mon),
   path('manage_can_bo/', views.manager_canbo, name = 'quanly_canbo'),
   path('manage_can_bo_data/', views.manage_canbo_data),

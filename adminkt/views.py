@@ -39,7 +39,6 @@ def manage_class(request):
     else:
         return HttpResponseRedirect('/')
 
-
 def manage_class_data(request):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -71,7 +70,6 @@ def manage_class_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
-
 
 def manage_donvi(request):
     user = request.user
@@ -209,8 +207,7 @@ def manage_mon_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
-
-
+        
 def manage_hocvien(request):
     user = request.user
     content = {'username': user.username, 'ds_donvi': DonVi.objects.all()}
@@ -284,8 +281,10 @@ def manage_hocvien_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
+
 def create_kithi(request):
     return render(request,'adminkt/create_kithi.html')
+
 def manager_canbo(request):
     user = request.user
     content = {'username':user.username, 'ds_donvi':DonVi.objects.all()}
@@ -344,6 +343,7 @@ def manager_canbo(request):
         return render(request, 'adminkt/manager_canbo.html', content)
     else:
         return HttpResponseRedirect('/')
+
 def manage_canbo_data(request):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -382,6 +382,7 @@ def manage_canbo_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
+
 def kithi(request):
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
@@ -391,40 +392,43 @@ def thongke(request):
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
     return render(request,'adminkt/thongke.html')
+
 def data_mon(request):
     return False
+
 def manager_kithi(request):
     user = request.user
+    content = {'username': user.username}
     if user.is_authenticated:
-        if request.method == 'POST':
-            if 'delete' in request.POST:
-                KyThi.objects.get(id=request.POST['delete']).delete()
-            else:
-                if request.POST['kieu'] == 'new':
-                    try:
-                        KyThi.objects.create(MaKyThi=request.POST['ten'], lop=request.POST['lop'], he=request.POST['he'])
-                    except:
-                        pass
-                else:
-                    m = Mon.objects.get(id=request.POST['id'])
-                    m.ten = request.POST['ten']
-                    m.lop = request.POST['lop']
-                    m.he = request.POST['he']
-                    m.save()
-        return render(request, 'adminsc/manage_mon.html', content)
+        # if request.method == 'POST':
+        #     if 'delete' in request.POST:
+        #         KyThi.objects.get(id=request.POST['delete']).delete()
+        #     else:
+        #         if request.POST['kieu'] == 'new':
+        #             try:
+        #                 KyThi.objects.create(MaKyThi=request.POST['ten'], lop=request.POST['lop'], he=request.POST['he'])
+        #             except:
+        #                 pass
+        #         else:
+        #             m = Mon.objects.get(id=request.POST['id'])
+        #             m.ten = request.POST['ten']
+        #             m.lop = request.POST['lop']
+        #             m.he = request.POST['he']
+        #             m.save()
+        return render(request, 'adminkt/manager_kithi.html', content)
     else:
         return HttpResponseRedirect('/')
-def data_kithi(request):
-    # if not request.user.is_authenticated:
-    #     return redirect('CoiThi:login')
-    tblkithi = KyThi.objects.all()
-    tblmon =  Mon.objects.all()
-    data = []
-    for kithi in tblkithi:
-        makithi = '<p id="makithi_{0}">{1}</p>'.format(kithi.MaKyThi,kithi.MaKyThi)
-        ls_mon = '<p class="mon{0}">{1}</p>'.format(kithi.MaKyThi,kithi.MonHoc.TenMon)
-        ngaythi = kithi.NgayThi
-        options = '''
+
+def manage_kithi_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_kithi = KyThi.objects.all()
+        data = []
+        for kt in ls_kithi:
+            tenkithi = '<p id="tenkithi_{0}">{1}</p>'.format(kt.id, kt.tenKyThi)
+            tungay = '<p id="tungay_{}">{}</p>'.format(kt.id,kt.ngayBatDau)
+            denngay = '<p id="denngay_{0}">{1}</p>'.format(kt.id,kt.ngayKetThuc)
+            options = '''
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_teacher" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>   Chỉnh sửa</button> 
@@ -432,8 +436,9 @@ def data_kithi(request):
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                     </button> 
                 </div>
-            '''.format(kithi.MaKyThi)
-        data.append([makithi,ls_mon, str(ngaythi), options])
-    big_data = {"data": data}
-    json_data = json.loads(json.dumps(big_data))
-    return JsonResponse(json_data)
+            '''.format(kt.id)
+            data.append([tenkithi, tungay, denngay, options])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+    
