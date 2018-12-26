@@ -34,7 +34,7 @@ def manage_class(request):
                     l.maMon = Mon.objects.get(id = request.POST['mon'])
                     l.save()
                 
-        content = {'username': user.username, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all()}
+        content = {'username': user.username, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all(),'ds_sinhvien':SinhVien.objects.all(),'ds_lop':LopHoc.objects.all()}
         return render(request, 'adminkt/manager_lop.html', content)
     else:
         return HttpResponseRedirect('/')
@@ -47,15 +47,9 @@ def manage_class_data(request):
             ten = '<p id="ten_{}">{}</p>'.format(lop.id, lop.tenLop)
             khoa = '<p id="khoa_{}">{} - {}</p>'.format(lop.id, lop.maKhoa.tenKhoaHoc,lop.maKhoa.he)
             mon = '<p id="mon_{}">{}</p>'.format(lop.id, lop.maMon.tenMon)
-            # nien_khoa = '<p id="nien_khoa_{}">{}</p>'.format(lop.id, lop.nien_khoa_id.ten_nien_khoa + ' - ' + str(lop.nien_khoa_id.nam_hoc))
-            # ls_chi_tiet = ChiTietLop.objects.filter(id=lop).values()
-            # gv = '''
-            # {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_teacher"></i> 
-            # '''.format(lop.ten, MyUser.objects.filter(id__in=ls_chi_tiet, position=1).count())
-           
             hs = '''
             {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_student"></i> 
-            '''.format(lop.tenLop,LopHoc.objects.filter(maLop = id).count())
+            '''.format(lop.tenLop,ChiTietLop.objects.filter(maLop_id = lop.id).count())
             options = '''
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
@@ -70,6 +64,44 @@ def manage_class_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
+def manage_add_student(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                ChiTietLop.objects.get(id=request.POST['delete']).delete()
+            elif 'lop' in request.POST:
+                
+                if request.POST['kieu'] == 'new':
+                    # try:
+                    ChiTietLop.objects.create(maLop = LopHoc.objects.get(id = request.POST['lop']) ,maSinhVien=SinhVien.objects.get(id =request.POST['sinhvien']))
+                    # except:
+                    #     pass
+        return JsonResponse({'status':'succsec'})
+    else:
+        return HttpResponseRedirect('/')
+def manage_student_data(request,lop):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_chi_tiet = ChiTietLop.objects.filter(maLop = LopHoc.objects.get(tenLop=lop)).values('maLop')
+        ls_student = ChiTietLop.objects.filter(maLop__in = ls_chi_tiet)
+        data = []
+        for student in ls_student:
+            fullname = '<p id="full_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.tenSinhVien)
+            username = '<p id="user_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.maSinhVien)
+            tuoi = '<p id="tuoi_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.tuoi)
+            capham = '<p id="capham_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.maDonVi.tenDonVi)
+            option = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+            '''.format(student.id)
+            data.append([fullname, username, tuoi,capham,option])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)  
 
 def manage_donvi(request):
     user = request.user
@@ -393,28 +425,25 @@ def thongke(request):
         return redirect('CoiThi:login')
     return render(request,'adminkt/thongke.html')
 
-def data_mon(request):
-    return False
-
 def manager_kithi(request):
     user = request.user
-    content = {'username': user.username}
+    content = {'username': user.username,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}  
     if user.is_authenticated:
-        # if request.method == 'POST':
-        #     if 'delete' in request.POST:
-        #         KyThi.objects.get(id=request.POST['delete']).delete()
-        #     else:
-        #         if request.POST['kieu'] == 'new':
-        #             try:
-        #                 KyThi.objects.create(MaKyThi=request.POST['ten'], lop=request.POST['lop'], he=request.POST['he'])
-        #             except:
-        #                 pass
-        #         else:
-        #             m = Mon.objects.get(id=request.POST['id'])
-        #             m.ten = request.POST['ten']
-        #             m.lop = request.POST['lop']
-        #             m.he = request.POST['he']
-        #             m.save()
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                KyThi.objects.get(id=request.POST['delete']).delete()
+            else:
+                if request.POST['kieu'] == 'new':
+                    # try:
+                    KyThi.objects.create(tenKyThi=request.POST['tenkithi'], ngayBatDau=request.POST['tungay'], ngayKetThuc=request.POST['denngay'])
+                    # except:
+                    #     pass
+                else:
+                    m = KyThi.objects.get(id=request.POST['id'])
+                    m.tenKyThi = request.POST['tenkithi']
+                    m.ngayBatDau = request.POST['tungay']
+                    m.ngayKetThuc = request.POST['denngay']
+                    m.save()
         return render(request, 'adminkt/manager_kithi.html', content)
     else:
         return HttpResponseRedirect('/')
@@ -426,19 +455,75 @@ def manage_kithi_data(request):
         data = []
         for kt in ls_kithi:
             tenkithi = '<p id="tenkithi_{0}">{1}</p>'.format(kt.id, kt.tenKyThi)
-            tungay = '<p id="tungay_{}">{}</p>'.format(kt.id,kt.ngayBatDau)
-            denngay = '<p id="denngay_{0}">{1}</p>'.format(kt.id,kt.ngayKetThuc)
+            tungay = '<p id="tungay_{}" data-tungay="{}">{}</p>'.format(kt.id,kt.ngayBatDau,kt.ngayBatDau.strftime('%d-%m-%Y'))
+            denngay = '<p id="denngay_{0}" data-denngay="{1}">{2}</p>'.format(kt.id,kt.ngayKetThuc,kt.ngayKetThuc.strftime('%d-%m-%Y'))
+            ds_phongthi = '''
+            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_room"></i> 
+            '''.format(kt.tenKyThi,PhongThi.objects.filter(maKyThi_id = kt.id).count())
             options = '''
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_teacher" data-title="edit" id="edit_{0}">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_kithi" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>   Chỉnh sửa</button> 
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-title="del" id="del_{0}" data-target="#delete_kithi">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                     </button> 
                 </div>
             '''.format(kt.id)
-            data.append([tenkithi, tungay, denngay, options])
+            data.append([tenkithi, tungay, denngay, ds_phongthi, options])
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
     
+def manage_ki_thi_data(request,kithi):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_chi_tiet = KyThi.objects.filter(tenKyThi = kithi).values('id')
+        ls_phongthi = PhongThi.objects.filter(maKyThi__in = ls_chi_tiet)
+        data = []
+        for room in ls_phongthi:
+            tenphong = '<p id="room_{0}">{1}</p>'.format(room.id, room.tenPhong)
+            vitri = '<p id="vitri_{0}">{1}</p>'.format(room.id, room.viTri)
+            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(room.id, room.ngayThi.strftime('%d-%m-%y'))
+            gio = '<p id="gio_{0}">{1}</p>'.format(room.id, room.gio)
+            tenlop = '<p id="tenlop_{0}">{1}</p>'.format(room.id, room.maLop.maLop.tenLop)
+            canbocoi1 = '<p id="cbcoi1_{0}">{1}</p>'.format(room.id, room.canBoCoi1.tenCanBo)
+            canBoCoi2 = '<p id="cbcoi2_{0}">{1}</p>'.format(room.id, room.canBoCoi2.tenCanBo)
+            option = '''
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
+                    </button> 
+                </div>
+            '''.format(room.id)
+            data.append([tenphong, vitri, ngaythi,gio,tenlop,canbocoi1,canBoCoi2,option])
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+
+def manage_add_kithi(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        if request.method == 'POST':
+            if 'delete' in request.POST:
+                PhongThi.objects.get(id=request.POST['delete']).delete()
+            elif 'lop' in request.POST:
+                
+                if request.POST['kieu'] == 'new':
+                    # try:
+                    PhongThi.objects.create(maKyThi = KyThi.objects.get(id = request.POST['kithi']) ,
+                                            canBoCoi1=CanBo.objects.get(id =request.POST['cbc1']),
+                                            canBoCoi2=CanBo.objects.get(id =request.POST['cbc2']),
+                                            maLop = ChiTietLop.objects.get(maLop = LopHoc.objects.get(id = request.POST['lop']).id),
+                                            tenPhong = request.POST['tenphong'],
+                                            viTri = request.POST['vitri'],
+                                            ngayThi = request.POST['ngaythi'],
+                                            gio = request.POST['gio'])
+                    
+                    ChamThi.objects.create(maPhong = PhongThi.objects.get(tenPhong = request.POST['tenphong']),
+                                           canBoCham1=CanBo.objects.get(id =request.POST['cbcham1']),
+                                           canBoCham2=CanBo.objects.get(id =request.POST['cbcham2']) )
+                    # except:
+                    #     pass
+        return JsonResponse({'status':'succsec'})
+    else:
+        return HttpResponseRedirect('/')

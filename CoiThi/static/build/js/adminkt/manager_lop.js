@@ -33,7 +33,7 @@ $(document).ready(function(){
         var button = $(event.relatedTarget);
         var title = button.data('title');
         $("#detail_student_title").text("Chi tiết lớp "+title);
-        table_student.ajax.url("/adminkt/manage_student_data" + title).load();
+        table_student.ajax.url("/adminkt/manage_student/data_" + title).load();
     });
 
     $("#list_class").on('click', '.btn-danger', function(){
@@ -50,7 +50,21 @@ $(document).ready(function(){
            });
         }
     });
-
+    $("#detail_student").on('click', '.btn-danger', function(){
+        var id = $(this).attr('id').split('_')[1];
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        if (confirm('Bạn có chắc ?')){
+            $.ajax({
+                type:'POST',
+                url:'/adminkt/manage_add_student/',
+                data: {'delete':id, 'csrfmiddlewaretoken':token},
+                success: function(){
+                    table_student.ajax.reload(null,false);
+                    table_class.ajax.reload(null,false);
+                }
+           });
+        }
+    });
     $("#new_class").on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
         var title = button.data('title');
@@ -115,7 +129,43 @@ $(document).ready(function(){
             }
         });
     });
-
+    $('#save_add_sv').click( function(){
+        var kieu = 'new';
+        var token = $("#add_student input[name=csrfmiddlewaretoken]").val();
+        lop = '';
+        $("#lsl option").each(function(){
+            if($("#add_student input[name=tenlop]").val() == $(this).val()){
+                lop = $(this).data("lop");
+                return false;
+            }
+        });
+        if(lop == ''){
+            alert("Lớp không chính xác");
+            return false;
+        }
+        var sinhvien = '';
+        $("#lsa option").each(function(){
+            if($("#add_student input[name=masv]").val() == $(this).val()){
+                sinhvien = $(this).data("sv");
+                return false;
+            }
+        });
+        if(sinhvien == ''){
+            alert("Sinh viên không chính xác");
+            return false;
+        }
+        $.ajax({
+            type:'POST',
+            url:'/adminkt/manage_add_student/',
+            data: {'csrfmiddlewaretoken':token,'kieu':kieu, 'lop':lop, 'sinhvien':sinhvien},
+            success: function(){
+                $("#add_student").modal("hide");
+                // alert('Thêm sinh viên thành công');
+                table_class.ajax.reload(null,false);
+                
+            }
+        });
+    });
 //     var input_dom_element = document.getElementById("file");
 //     var result;
 
