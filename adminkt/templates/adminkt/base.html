@@ -36,7 +36,7 @@
                 <!-- menu profile quick info -->
                 <div class="profile clearfix">
                   <div class="profile_pic">
-                    <img src="../../images/img.jpg" alt="..." class="img-circle profile_img">
+                    <img src="{% static '/images/img.jpg' %}" alt="..." class="img-circle profile_img">
                   </div>
                   <div class="profile_info">
                     <span>Xin chào,</span>
@@ -120,7 +120,7 @@
                   <ul class="nav navbar-nav navbar-right">
                     <li class="">
                       <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="images/img.jpg" alt="">{{username}}
+                        <img src="{% static '/images/img.jpg' %}" alt="">{{username}}
                         <span class=" fa fa-angle-down"></span>
                       </a>
                       <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -146,7 +146,7 @@
             <!-- footer content -->
             <footer>
               <div class="pull-right">
-                Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+                <h4>Phần mềm khảo thí</h4>
               </div>
               <div class="clearfix"></div>
             </footer>

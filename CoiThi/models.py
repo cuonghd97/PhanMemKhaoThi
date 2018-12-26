@@ -106,7 +106,7 @@ class PhongThi(models.Model):
   viTri = models.CharField(max_length=100, null=True)
   ngayThi = models.DateField(default=timezone.now)
   gio = models.DateTimeField(default=timezone.now)
-  maLop = models.ForeignKey(ChiTietLop, models.SET_NULL, null=True)
+  maLop = models.ForeignKey(LopHoc, models.SET_NULL, null=True)
   canBoCoi1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi1', null=True)
   canBoCoi2 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi2', null=True)
   maKyThi = models.ForeignKey(KyThi, models.SET_NULL, null=True)
