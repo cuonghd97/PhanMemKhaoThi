@@ -63,6 +63,7 @@ class LopHoc(models.Model):
   tenLop = models.TextField(max_length=200, null=True)
   maKhoa = models.ForeignKey(KhoaHoc, models.CASCADE, null=True)
   maMon = models.ForeignKey(Mon, models.CASCADE, null=True)
+  hinhThucThi = models.TextField(max_length=200, null=True)
 
   class Meta:
     managed = True
@@ -110,7 +111,8 @@ class PhongThi(models.Model):
   canBoCoi1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi1', null=True)
   canBoCoi2 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi2', null=True)
   maKyThi = models.ForeignKey(KyThi, models.SET_NULL, null=True)
-
+  thoiGianThi = models.IntegerField(default=0)
+  role = models.IntegerField(default=1)
   class Meta:
     managed = True
     db_table = 'phong_thi'

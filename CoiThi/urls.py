@@ -10,6 +10,6 @@ urlpatterns = [
   path('coi-thi/', views.coithi, name = 'coithi'),
   path('cham-thi/', views.chamthi, name = 'chamthi'),
   path('logout/', views.user_logout, name = 'logout'),
-  path('data-phongthi', views.dataPhongThi),
-  path('ds-phongthi', views.danhsachphongthi)
+  path('ds-phongthi', views.danhsachphongthi),
+  path('coithi/<int:a>', views.danhSachSinhVien),
 ]

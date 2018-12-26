@@ -27,14 +27,29 @@
             <table id="datatable-buttons" class="table table-striped table-bordered">
               <thead>
                 <tr>
-                  <th>STT</th>
-                  <th>Tên phòng</th>
-                  <th>Môn thi</th>
-                  <th>Lớp</th>
-                  <th>Coi thi</th>
+                  <th>ten sinh vien</th>
+                  <th>don vi</th>
+                  <th>tuoi</th>
+                  <th>trang thai</th>
+                  <th>ly do</th>
+                  <th>ghi chu</th>
+                  <th>diem</th>
+                  <th>thoi gian vao thi</th>
                 </tr>
               </thead>
               <tbody>
+                {% for item in sinhvien %}
+                <tr>
+                  <td>{{ item.maSinhVien.tenSinhVien }}</td>
+                  <td>{{ item.maSinhVien.maDonVi.tenDonVi }}</td>
+                  <td>{{ item.maSinhVien.tuoi }}</td>
+                  <td>{{ item.trangThai }}</td>
+                  <td>{{ item.lyDo }}</td>
+                  <td>{{ item.ghiChu }}</td>
+                  <td>{{ item.diem }}</td>
+                  <td>{{ thoigian }}</td>
+                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -50,5 +65,5 @@
     element = document.getElementsByTagName('body')
     element[0].classList.add('nav-md')
   </script>
-  <script src="{% static 'build/js/coithi/danhsachphongthi.js' %}"></script>
+  <!-- <script src="{% static 'build/js/coithi/danhsachphongthi.js' %}"></script> -->
 {% endblock js %}
