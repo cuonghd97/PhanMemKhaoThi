@@ -513,7 +513,7 @@ def manage_add_kithi(request):
                     PhongThi.objects.create(maKyThi = KyThi.objects.get(id = request.POST['kithi']) ,
                                             canBoCoi1=CanBo.objects.get(id =request.POST['cbc1']),
                                             canBoCoi2=CanBo.objects.get(id =request.POST['cbc2']),
-                                            maLop = ChiTietLop.objects.get(maLop = LopHoc.objects.get(id = request.POST['lop']).id),
+                                            maLop = LopHoc.objects.get(id = request.POST['lop']),
                                             tenPhong = request.POST['tenphong'],
                                             viTri = request.POST['vitri'],
                                             ngayThi = request.POST['ngaythi'],
