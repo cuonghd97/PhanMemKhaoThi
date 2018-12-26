@@ -5,6 +5,11 @@ from django.contrib.auth import authenticate, login, decorators, logout, get_use
 from django.shortcuts import redirect
 from django.conf import settings
 import json
+from docx import Document
+from docx.shared import Inches,Pt,Mm
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
 from CoiThi.models import *
 # Create your views here.
 def home(request):
@@ -421,14 +426,165 @@ def kithi(request):
     return render(request,'adminkt/manager_kithi.html')
 
 def thongke(request):
-    if not request.user.is_authenticated:
-        return redirect('CoiThi:login')
-    return render(request,'adminkt/thongke.html')
+    user = request.user
+    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        return render(request, 'adminkt/thongke.html', content)
+    else:
+        return HttpResponseRedirect('/')
+def thongke_kithi(request,kithi):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_kt = KyThi.objects.get(id = kithi)
+        ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
+        data = []
+        a = 0
+        document = Document()
+        style = document.styles['Normal']
+        font = style.font
+        font.name = 'Time New Roman'
+        font.size = Pt(14)
+        section = document.sections[0]
+        section.page_height = Mm(297)
+        section.page_width = Mm(210)
+        section.left_margin = Mm(15)
+        section.right_margin = Mm(15)
+
+        table1 = document.add_table(rows=1, cols=2)
+        table1.alignment = WD_TABLE_ALIGNMENT.CENTER
+        hdr_cells = table1.rows[0].cells
+        paragraph = hdr_cells[0].paragraphs[0]
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = paragraph.add_run('HỌC VIỆN AN NINH NHÂN DÂN')
+        run.bold = True
+        run.add_break()
+        run1 = paragraph.add_run('PHÒNG KHẢO THÍ & ĐBCLĐT')
+        run1.bold = True
+        run1.underline = True
+        # cell.add_paragraph('')0
+        # cell.add_run('HỌC VIỆN AN NINH NHÂN DÂN').bodl
+        paragraph1 = hdr_cells[1].paragraphs[0]
+        paragraph1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run2 = paragraph1.add_run('CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM')
+        run2.bold = True
+        run2.add_break()
+        run3 = paragraph1.add_run('Độc lập – Tự do – Hạnh phúc')
+        run3.bold = True
+        run3.underline = True
+        text = 'Hà nội, ngày 30 tháng 10 năm 2018'
+
+        paragraph3 =  document.add_paragraph()
+        paragraph3.add_run(text).italic = True
+        paragraph3.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+        Tieude = 'THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN(LẦN 1)'
+
+        paragraph3 = document.add_paragraph()
+        paragraph3.add_run(Tieude).bold = True
+        paragraph3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+        Namhoc ='Năm học: 2017 – 2018'
+
+        paragraph3 = document.add_paragraph()
+        paragraph3.add_run(Namhoc)
+        paragraph3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+        body_text_style = document.styles['Table Grid']
+        table = document.add_table(rows=2, cols=10,style = body_text_style)
+        hdr_cells1 = table.rows[0].cells
+        hdr_cells2 = table.rows[1].cells
+
+        hdr_cells1[0].text = 'TT'
+        cel_meger0 = hdr_cells1[0].merge(hdr_cells2[0])
+        cel_meger0 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[1].text = 'Lớp'
+        cel_meger1 = hdr_cells1[1].merge(hdr_cells2[1])
+        cel_meger1 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[2].text = 'Quân số'
+        cel_meger2 = hdr_cells1[2].merge(hdr_cells2[2])
+        cel_meger2 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[3].text = 'Ngày thi'
+        cel_meger3 = hdr_cells1[3].merge(hdr_cells2[3])
+        cel_meger3 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[4].text = 'Môn thi'
+        cel_meger4 = hdr_cells1[4].merge(hdr_cells2[4])
+        cel_meger4 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[5].text = 'Hình thức thi'
+        cel_meger5 = hdr_cells1[5].merge(hdr_cells2[5])
+        cel_meger5 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[6].text = 'Cán bộ chấm thi'
+        cel_meger6 = hdr_cells1[6].merge(hdr_cells1[7].merge(hdr_cells1[8]))
+        cel_meger6 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells2[6].text = 'Họ và tên'
+        hdr_cells2[7].text = 'Đơn vị'
+        hdr_cells2[8].text = 'Cấp hàm'
+
+        hdr_cells1[9].text = 'Ghi chú'
+        cel_meger7 = hdr_cells1[9].merge(hdr_cells2[9])
+        cel_meger7 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        for pt in ls_pt:
+            row_cells = table.add_row().cells
+            a = a + 1
+            row_cells[0].text = str(a)
+            lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
+            row_cells[1].text = pt.maLop.tenLop
+            quanso = '<p id="quanso_{0}">{1}</p>'.format(pt.id,ChiTietLop.objects.filter(maLop = pt.maLop).count())
+            row_cells[2].text = str(ChiTietLop.objects.filter(maLop = pt.maLop).count())
+            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id, pt.ngayThi.strftime('%d-%m-%Y'))
+            row_cells[3].text = pt.ngayThi.strftime('%d-%m-%Y')
+            mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
+            row_cells[4].text = pt.maLop.maMon.tenMon
+            hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,pt.maLop.hinhThucThi)
+            row_cells[5].text = str(pt.maLop.hinhThucThi)
+            tencb1 = '<p id="tencb1_{0}">{1}</p>'.format(pt.id,ChamThi.objects.get(maPhong = pt.id).canBoCham1.tenCanBo)
+            row_cells[6].text = ChamThi.objects.get(maPhong = pt.id).canBoCham1.tenCanBo
+            donvi = '<p id="donvi_{0}">{1}</p>'.format(pt.id,ChamThi.objects.get(maPhong = pt.id).canBoCham1.maDonVi.tenDonVi)
+            row_cells[7].text = ChamThi.objects.get(maPhong = pt.id).canBoCham1.maDonVi.tenDonVi
+            quanham = '<p id="quanham_{0}">{1}</p>'.format(pt.id,ChamThi.objects.get(maPhong = pt.id).canBoCham1.quanHam)
+            row_cells[8].text = ChamThi.objects.get(maPhong = pt.id).canBoCham1.quanHam
+            ghichu = ''
+            row_cells[9].text = ' '
+            data.append([str(a),lop, quanso, ngaythi, mon, hinhthuc, tencb1,donvi,quanham,ghichu])
+        
+        document.add_paragraph().add_run().add_break()
+        table2 = document.add_table(rows=1, cols=2)
+        table2.alignment = WD_TABLE_ALIGNMENT.CENTER
+        hdr_cells = table2.rows[0].cells
+        paragraph6 = hdr_cells[0].paragraphs[0]
+        paragraph6.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run5 = paragraph6.add_run('TRƯỞNG PHÒNG')
+        run5.bold = True
+        paragraph7 = hdr_cells[1].paragraphs[0]
+        paragraph7.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run6 = paragraph7.add_run('CÁN BỘ THỐNG KÊ')
+        run6.bold = True
+        document.save('media/doc/'+Tieude +'.docx')
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+    else:
+        return HttpResponseRedirect('/')
 
 def manager_kithi(request):
     user = request.user
     content = {'username': user.username,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}  
-    if user.is_authenticated:
+    if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
                 KyThi.objects.get(id=request.POST['delete']).delete()
@@ -485,7 +641,7 @@ def manage_ki_thi_data(request,kithi):
             vitri = '<p id="vitri_{0}">{1}</p>'.format(room.id, room.viTri)
             ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(room.id, room.ngayThi.strftime('%d-%m-%y'))
             gio = '<p id="gio_{0}">{1}</p>'.format(room.id, room.gio)
-            tenlop = '<p id="tenlop_{0}">{1}</p>'.format(room.id, room.maLop.maLop.tenLop)
+            tenlop = '<p id="tenlop_{0}">{1}</p>'.format(room.id, room.maLop.tenLop)
             canbocoi1 = '<p id="cbcoi1_{0}">{1}</p>'.format(room.id, room.canBoCoi1.tenCanBo)
             canBoCoi2 = '<p id="cbcoi2_{0}">{1}</p>'.format(room.id, room.canBoCoi2.tenCanBo)
             option = '''

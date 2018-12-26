@@ -42,7 +42,7 @@ $(document).ready(function() {
         if (confirm('Bạn có chắc ?')){
             $.ajax({
                 type:'POST',
-                url:'/adminkt/manage_add_student/',
+                url:'/adminkt/manage_add_kithi/',
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
                 success: function(){
                     table_room.ajax.reload(null,false);

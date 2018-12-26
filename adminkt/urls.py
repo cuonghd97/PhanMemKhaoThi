@@ -22,5 +22,6 @@ urlpatterns = [
   path('manage_can_bo/', views.manager_canbo, name = 'quanly_canbo'),
   path('manage_can_bo_data/', views.manage_canbo_data),
   path('thong_ke_ki_thi/', views.thongke, name = 'thongke'),
+  path('thong_ke_ki_thi/<int:kithi>', views.thongke_kithi, name = 'thongke'),
   path('manage_add_kithi/', views.manage_add_kithi),
 ]
