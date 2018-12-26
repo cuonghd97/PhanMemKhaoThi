@@ -93,8 +93,8 @@ class ChiTietKhoa(models.Model):
 # Bảng Kỳ Thi
 class KyThi(models.Model):
   tenKyThi = models.TextField(max_length=200, null=True)
-  ngayBatDau = models.TimeField(default=timezone.now)
-  ngayKetThuc = models.TimeField(default=timezone.now)
+  ngayBatDau = models.DateField(default=timezone.now)
+  ngayKetThuc = models.DateField(default=timezone.now)
 
   class Meta:
     managed = True
@@ -104,7 +104,7 @@ class KyThi(models.Model):
 class PhongThi(models.Model):
   tenPhong = models.TextField(max_length=100, null=True)
   viTri = models.CharField(max_length=100, null=True)
-  ngayThi = models.TimeField(default=timezone.now)
+  ngayThi = models.DateField(default=timezone.now)
   gio = models.TimeField(default=timezone.now)
   maLop = models.ForeignKey(LopHoc, models.SET_NULL, null=True)
   canBoCoi1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCoi1', null=True)
@@ -120,7 +120,7 @@ class ChamThi(models.Model):
   maPhong = models.ForeignKey(PhongThi, models.CASCADE, null=True)
   canBoCham1 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCham1', null=True)
   canBoCham2 = models.ForeignKey(CanBo, models.SET_NULL, related_name='canBoCham2', null=True)
-  ngayCham = models.TimeField(default=timezone.now)
+  ngayCham = models.DateField(default=timezone.now)
 
   class Meta:
     managed = True
