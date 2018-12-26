@@ -102,7 +102,7 @@ class KyThi(models.Model):
 
 # Phòng Thi
 class PhongThi(models.Model):
-  maPhong = models.CharField(max_length=100, null=True)
+  tenPhong = models.TextField(max_length=100, null=True)
   viTri = models.CharField(max_length=100, null=True)
   ngayThi = models.DateField(default=timezone.now)
   gio = models.DateTimeField(default=timezone.now)

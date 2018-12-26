@@ -40,20 +40,82 @@ def coithi(request):
   data = {'name': request.user.tenCanBo}
   return render(request, 'coithi/coithi.html', data)
 
-# Data danh sach phong thi
+# Danh sach cac phong thi
+def danhsachphongthi(request):
+  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai).first()
+  danhSachPhongThi = models.PhongThi.objects.all()
+  datas = []
+  for item in danhSachPhongThi:
+    if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
+      if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
+        data = {}
+        tenLop = item.maLop.maLop.tenLop
+        maLop = item.maLop.maLop.id
+        monHoc = item.maLop.maLop.maMon.tenMon
+        idCanBoCoi1 = item.canBoCoi1.id
+        idCanBoCoi2 = item.canBoCoi2.id
+        idPhong = item.id
+        tenPhong = item.tenPhong
+        thoiGian = item.gio
+        data.update({'tenlop': tenLop})
+        data.update({'malop': maLop})
+        data.update({'monthi': monHoc})
+        data.update({'idcanbocoi1': idCanBoCoi1})
+        data.update({'idcanbocoi2': idCanBoCoi2})
+        data.update({'id': idPhong})
+        data.update({'tenphong': tenPhong})
+        data.update({'gio': thoiGian})
+        datas.append(data)
+  # Dua ra danh sach phong thi va mon thi khong trung nhau
+  b = []
+  for i in range(0, len(datas)):
+    if datas[i] not in datas[i+1:]:
+      b.append(datas[i])
+  return JsonResponse(b, safe=False)
+
+# Data danh sach chi tiet phong thi
 def dataPhongThi(request):
-  data = []
-  danhsachphongthi = models.PhongThi.objects.all()
-  for item in danhsachphongthi:
-    row = []
-    row.append([item.maLop.maSinhVien.tenSinhVien])
-    row.append([item.canBoCoi1.tenCanBo])
-    row.append([item.canBoCoi2.tenCanBo])
-    row.append([item.ngayThi])
-    row.append([item.maKyThi.ngayBatDau])
-    row.append([item.maKyThi.ngayKetThuc])
-    data.append(row)
-  datas = {"data": data}
+  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  kyThiHienTai = models.KyThi.objects.get(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
+  danhSachPhongThi = models.PhongThi.objects.all()
+  datas = []
+  for item in danhSachPhongThi:
+    if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
+      data = {}
+      tenSinhVien = item.maLop.maSinhVien.tenSinhVien
+      diem = item.maLop.diem
+      tenCanBoCoi1 = item.canBoCoi1.tenCanBo
+      tenCanBoCoi2 = item.canBoCoi2.tenCanBo
+      ngayThi = item.ngayThi
+      ngayBatDau = item.maKyThi.ngayBatDau
+      ngayKetThuc = item.maKyThi.ngayKetThuc
+      trangThai = item.maLop.trangThai
+      lyDo = item.maLop.lyDo
+      ghiChu = item.maLop.ghiChu
+      tenLop = item.maLop.maLop.tenLop
+      monHoc = item.maLop.maLop.maMon.tenMon
+      quanHamCanBo1 = item.canBoCoi1.quanHam
+      quanHamCanBo2 = item.canBoCoi2.quanHam
+      donViCanBo1 = item.canBoCoi1.maDonVi.tenDonVi
+      donViCanBo2 = item.canBoCoi2.maDonVi.tenDonVi
+      data.update({'tensinhvien': tenSinhVien})
+      data.update({'diem': diem})
+      data.update({'ngaythi': ngayThi})
+      data.update({'ngaybatdau': ngayBatDau})
+      data.update({'ngayketthuc': ngayKetThuc})
+      data.update({'trangthai': trangThai})
+      data.update({'lydo': lyDo})
+      data.update({'ghichu': ghiChu})
+      data.update({'tenlop': tenLop})
+      data.update({'monhoc': monHoc})
+      data.update({'tencanbocoi1': tenCanBoCoi1})
+      data.update({'quanhamcanbo1': quanHamCanBo1})
+      data.update({'donvicanbo1': donViCanBo1})
+      data.update({'tencanbocoi2': tenCanBoCoi2})
+      data.update({'quanhamcanbo2': quanHamCanBo2})
+      data.update({'donvicanbo2': donViCanBo2})
+      datas.append(data)
   return JsonResponse(datas, safe=False)
 
 # Trang cham thi
