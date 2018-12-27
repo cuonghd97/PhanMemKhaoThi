@@ -1,0 +1,38 @@
+@page :first {
+    margin-top: 2cm 
+  }
+@page :left {
+    margin-left: 3cm;
+}
+@page :right {
+    margin-left: 2cm;
+  }
+#Tieude{
+    text-align: center;
+}
+.dulieu{
+    text-align: center;
+}
+.col-md-6{
+    position: relative;
+    min-height: 1px;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+    width: 50%;
+}
+.rows{
+    text-align: center;
+}
+.col-md-12 {
+    position: relative;
+    min-height: 1px;
+    float: left;
+    padding-right: 10px;
+    padding-left: 10px;
+    width: 100%;
+}
+
+#ngay{
+    float: right;
+}

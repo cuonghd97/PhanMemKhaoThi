@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, decorators, logout, get_use
 from django.shortcuts import redirect
 from django.conf import settings
 import json
+import os
 from docx import Document
 from docx.shared import Inches,Pt,Mm
 from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -164,11 +165,11 @@ def manage_khoa(request):
                 KhoaHoc.objects.get(id=request.POST['delete']).delete()
             else:
                 if request.POST['kieu'] == 'new':
-                    # try:
-                    KhoaHoc.objects.create(tenKhoaHoc=request.POST['khoa'], he=request.POST['he'],)
+                    try:
+                        KhoaHoc.objects.create(tenKhoaHoc=request.POST['khoa'], he=request.POST['he'])
 
-                    # except:
-                    #     pass
+                    except:
+                        pass
                 else:
                     nk = KhoaHoc.objects.get(id=request.POST['id'])
                     nk.tenKhoaHoc = request.POST['khoa']
@@ -572,8 +573,9 @@ def thongke_kithi(request,kithi):
         paragraph7.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run6 = paragraph7.add_run('CÁN BỘ THỐNG KÊ')
         run6.bold = True
-        document.save('media/doc/'+Tieude +'.docx')
-        big_data = {"data": data}
+        path = 'media/doc/'+Tieude +'.docx'
+        document.save(path)
+        big_data = {"data": data,'download' : path}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
     else:
@@ -681,3 +683,13 @@ def manage_add_kithi(request):
         return JsonResponse({'status':'succsec'})
     else:
         return HttpResponseRedirect('/')
+
+def download(request, path):
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return redirect('/')
+    return redirect('/')
+    # raise Http404
+    
