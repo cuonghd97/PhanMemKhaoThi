@@ -185,21 +185,36 @@ def dsPhongCham(request):
   ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
   kyThiHienTai = models.KyThi.objects.get(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
   danhSachPhongCham = models.ChamThi.objects.all()
-
+  i = 0
   for item in danhSachPhongCham:
     if request.user.id == item.canBoCham1.id or request.user.id == item.canBoCham2.id:
       data = {}
+
+      i = i + 1
       tenCanBoCoi1 = item.canBoCham1.tenCanBo
       tenCanBoCoi2 = item.canBoCham2.tenCanBo
       ngayCham = item.ngayCham
       hinhThucThi = item.maPhong.hinhThucThi
       tenMon = item.maPhong.maLop.maMon.tenMon
+      tenPhong = item.maPhong.tenPhong
+      idPhong = item.maPhong.id
 
-      data.update({'idcanbocoi1': tenCanBoCoi1})
-      data.update({'idcanbocoi2': tenCanBoCoi2})
+      data.update({'tencanbocham1': tenCanBoCoi1})
+      data.update({'tencanbocham2': tenCanBoCoi2})
       data.update({'ngaycham': ngayCham})
       data.update({'hinhthucthi': hinhThucThi})
       data.update({'tenmon': tenMon})
+      data.update({'tenphong': tenPhong})
+      data.update({'idphong': idPhong})
+      data.update({'no': i})
 
       datas.append(data)
   return JsonResponse(datas, safe=False)
+
+
+def ChamTay(request, a):
+  data = {'id': a}
+  return render(request, 'chamthi/chamtay.html', data)
+
+def ChamTuDong(request, a):
+  return HttpResponse('cham tu dong')

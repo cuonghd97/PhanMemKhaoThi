@@ -14,5 +14,7 @@ urlpatterns = [
   path('coithi/<int:a>', views.danhSachSinhVien, name = 'danhsachsv'),
   path('data-sv/<int:a>', views.dataSV),
   path('capnhat-trangthai/<str:s>', views.updateCoiThi),
-  path('ds-phongcham', views.dsPhongCham)
+  path('ds-phongcham', views.dsPhongCham),
+  path('cham-thi/chamtay/<int:a>', views.ChamTay),
+  path('cham-thi/chamtudong/<int:a>', views.ChamTuDong)
 ]
