@@ -10,7 +10,7 @@
   <div class="">
     <div class="page-title">
       <div class="title_left">
-        <h3>Danh sách phòng thi</h3>
+        <h3>Danh sách sinh viên</h3> <span><h3>Thời gian còn lại: <span id="demo"></span></h3></span>
       </div>
     </div>
 
@@ -24,32 +24,22 @@
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            <table id="datatable-buttons" class="table table-striped table-bordered">
+            <table id="" class="table table-striped table-bordered danhsachsinhvien">
               <thead>
                 <tr>
+                  <th>STT</th>
                   <th>ten sinh vien</th>
+                  <th>ma sinh vien</th>
                   <th>don vi</th>
-                  <th>tuoi</th>
                   <th>trang thai</th>
                   <th>ly do</th>
                   <th>ghi chu</th>
                   <th>diem</th>
-                  <th>thoi gian vao thi</th>
+                  <th>Sửa</th>
                 </tr>
               </thead>
               <tbody>
-                {% for item in sinhvien %}
-                <tr>
-                  <td>{{ item.maSinhVien.tenSinhVien }}</td>
-                  <td>{{ item.maSinhVien.maDonVi.tenDonVi }}</td>
-                  <td>{{ item.maSinhVien.tuoi }}</td>
-                  <td>{{ item.trangThai }}</td>
-                  <td>{{ item.lyDo }}</td>
-                  <td>{{ item.ghiChu }}</td>
-                  <td>{{ item.diem }}</td>
-                  <td>{{ thoigian }}</td>
-                </tr>
-                {% endfor %}
+
               </tbody>
             </table>
           </div>
@@ -58,12 +48,181 @@
     </div>
   </div>
 </div>
+<!-- modal sua thong tin -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sửa thông tin</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <table class="table">
+            {% csrf_token %}
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">Trạng thái</td>
+              <td>
+                <select name="" id="trangthai" class="form-control">
+                  <option value="">-- Chọn --</option>
+                  <option value="">Cấm thi</option>
+                  <option value="">Hoãn thi</option>
+                  <option value="">Nghỉ thi</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">Lý do</td>
+              <td>
+                <input type="text" name="" placeholder="Lý do" id="lydo" class="form-control">
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: center; vertical-align: middle;">Ghi chú</td>
+              <td>
+                <input type="text" name="" placeholder="Ghi chú" id="ghichu" class="form-control">
+              </td>
+              <input type="hidden" name="masinhvien" id="masinhvien">
+              <input type="hidden" name="id" id="id">
+            </tr>
+          </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-primary btnluu">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modal sua thong tin -->
 <!-- /page content -->
 {% endblock pagecontent %}
 {% block js %}
-  <script>
-    element = document.getElementsByTagName('body')
-    element[0].classList.add('nav-md')
-  </script>
-  <!-- <script src="{% static 'build/js/coithi/danhsachphongthi.js' %}"></script> -->
+<script>
+  element = document.getElementsByTagName('body')
+  element[0].classList.add('nav-md')
+</script>
+<script src="{% static 'build/js/coithi/dssinhvien.js' %}"></script>
+<script>
+  thoiGian = '{{ thoigian }}'
+  ngayThi = '{{ ngaythi }}'
+  thoiGianThi = '{{thoigianthi}}'
+  thoiGianThi = parseInt(thoiGianThi)
+
+  date = new Date(ngayThi + ' ' + thoiGian)
+  date.setMinutes(date.getMinutes() + thoiGianThi)
+
+  // Set the date we're counting down to
+  var countDownDate = new Date(date).getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function () {
+
+    // Get todays date and time
+    var now = new Date().getTime();
+
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    //var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="demo"
+    document.getElementById("demo").innerHTML = hours + "h " +
+      minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("demo").innerHTML = "Hết giờ";
+    }
+  }, 1000);
+</script>
+<script>
+  $(document).ready(function() {
+    id = '{{ id }}'
+    var table = $('.danhsachsinhvien').DataTable({
+      paging: false,
+      destroy: true,
+        "ajax": {
+            "type": "GET",
+            "url": "/data-sv/" + id,
+            "dataSrc": ""
+        },
+        "columns": [
+            {
+              "data": "no"
+            },
+            {
+              "data": "tensinhvien"
+            },
+            {
+              "data": "masinhvien",
+            },
+            {
+              "data": "tendonvi"
+            },
+            {
+              "data": "trangthai"
+            },
+            {
+              "data": "lydo"
+            },
+            {
+              "data": "ghichu"
+            },
+            {
+              "data": "diem"
+            }
+        ],
+        "columnDefs": [ {
+          "targets": 8,
+          "data": null,
+          "defaultContent": "<button class='btn btn-primary'>click</button>"
+        } ],
+        //createdRow: function(row, data, dataIndex) {
+        //  $(row).find('a').
+        //}
+    })
+
+    $('table').on('click', 'button', function() {
+      let data = table.row( $(this).parents('tr') ).data();
+      $('#lydo').val(data['lydo'])
+      $('#ghichu').val(data['ghichu'])
+      $('#masinhvien').val(data['masinhvien'])
+      $('#id').val(data['id'])
+      $(this).attr('data-toggle', 'modal').attr('data-target', '#exampleModal')
+    })
+
+    $('.btnluu').on('click', function() {
+      var masinhvien = $('#masinhvien').val()
+      var trangthai = $('#trangthai option:selected').text()
+      var lydo = $('#lydo').val()
+      var ghichu = $('#ghichu').val()
+      var idphong = $('#id').val()
+      console.log(idphong)
+
+      $.ajax({
+        type: 'POST',
+        url: '/capnhat-trangthai/' + masinhvien,
+        data: {
+          'masinhvien': masinhvien,
+          'trangthai': trangthai,
+          'lydo': lydo,
+          'ghichu': ghichu,
+          'idphong': idphong,
+          csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+        success: function() {
+          table.ajax.reload()
+          $('#exampleModal').modal('hide')
+        }
+      })
+    })
+  })
+</script>
 {% endblock js %}

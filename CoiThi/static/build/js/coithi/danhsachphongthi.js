@@ -33,8 +33,10 @@ $(document).ready(function () {
         "order": [[ 1, 'asc' ]],
         createdRow: function(row, data, dataIndex) {
             date = new Date(data['ngaythi'] + ' ' + data['gio'])
-
-            if (date.setMinutes(date.getMinutes() + data['thoigianthi']) >= Date.now()) {
+            dateNow = new Date()
+            dkt = new Date(data['ngaythi'] + ' ' + data['gio'])
+            thoiGianKetThuc = new Date(dkt.setMinutes(dkt.getMinutes() + data['thoigianthi']))
+            if (date <= dateNow && dateNow <=thoiGianKetThuc) {
                 $(row).find('a').attr('data-time', data['gio']).attr('data-date', data['ngaythi']).addClass('nut').attr('href', '/coithi/' + data['id'])
             }
             else {

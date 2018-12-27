@@ -38,56 +38,132 @@ def coithi(request):
   if not request.user.is_authenticated:
     return redirect('CoiThi:login')
   data = {'name': request.user.tenCanBo}
-  return render(request, 'coithi/coithi.html', data)
+  return render(request, 'coithi/dsphong.html', data)
 
 # Danh sach cac phong thi
 def danhsachphongthi(request):
-  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
-  kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai).first()
-  danhSachPhongThi = models.PhongThi.objects.all()
   datas = []
-  for item in danhSachPhongThi:
-    if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
-      if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
-        data = {}
-        tenLop = item.maLop.tenLop
-        monHoc = item.maLop.maMon.tenMon
-        idCanBoCoi1 = item.canBoCoi1.id
-        idCanBoCoi2 = item.canBoCoi2.id
-        idPhong = item.id
-        tenPhong = item.tenPhong
-        thoiGian = item.gio
-        thoiGianThi = item.thoiGianThi
-        role = item.role
-        ngayThi = item.ngayThi
+  try:
+    ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+    kyThiHienTai = models.KyThi.objects.get(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
+    danhSachPhongThi = models.PhongThi.objects.all()
+    for item in danhSachPhongThi:
+      if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
+        if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
+          data = {}
+          tenLop = item.maLop.tenLop
+          monHoc = item.maLop.maMon.tenMon
+          idCanBoCoi1 = item.canBoCoi1.id
+          idCanBoCoi2 = item.canBoCoi2.id
+          idPhong = item.id
+          tenPhong = item.tenPhong
+          thoiGian = item.gio.strftime('%H:%M')
+          thoiGianThi = item.thoiGianThi
+          role = item.role
+          ngayThi = item.ngayThi
 
-        data.update({'tenlop': tenLop})
-        data.update({'monthi': monHoc})
-        data.update({'idcanbocoi1': idCanBoCoi1})
-        data.update({'idcanbocoi2': idCanBoCoi2})
-        data.update({'id': idPhong})
-        data.update({'tenphong': tenPhong})
-        data.update({'gio': thoiGian})
-        data.update({'thoigianthi': thoiGianThi})
-        data.update({'role': role})
-        data.update({'ngaythi': ngayThi})
+          data.update({'tenlop': tenLop})
+          data.update({'monthi': monHoc})
+          data.update({'idcanbocoi1': idCanBoCoi1})
+          data.update({'idcanbocoi2': idCanBoCoi2})
+          data.update({'id': idPhong})
+          data.update({'tenphong': tenPhong})
+          data.update({'gio': thoiGian})
+          data.update({'thoigianthi': thoiGianThi})
+          data.update({'role': role})
+          data.update({'ngaythi': ngayThi})
 
-        datas.append(data)
+          datas.append(data)
+  except:
+    pass
   return JsonResponse(datas, safe=False)
 
 
 # Hien thi sinh vien trong phong thi voi id
 def danhSachSinhVien(request, a):
+  # idPhong = models.PhongThi.objects.get(id = a).maLop.id
+  # # return HttpResponse(idPhong)
+  # idLop = models.LopHoc.objects.filter(id = idPhong).first()
+  # dsSV = models.ChiTietLop.objects.filter(maLop = idLop.id)
+  # data = {'sinhvien': dsSV}
+
+  data = {}
+
+  thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
+  thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
+  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
+
+  data.update({'thoigian': thoiGian})
+  data.update({'thoigianthi': thoiGianThi})
+  data.update({'ngaythi': ngayThi})
+  data.update({'id': a})
+  return render(request, 'coithi/danhsachsinhvien.html', data)
+
+# Data danh sach sinh vien
+def dataSV(request, a):
+  datas = []
   idPhong = models.PhongThi.objects.get(id = a).maLop.id
   # return HttpResponse(idPhong)
   idLop = models.LopHoc.objects.filter(id = idPhong).first()
   dsSV = models.ChiTietLop.objects.filter(maLop = idLop.id)
-  data = {'sinhvien': dsSV}
+  # data = {'sinhvien': dsSV}
+
   thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
   thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
+  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
+
+  # data.update({'thoigian': thoiGian})
+  # data.update({'thoigianthi': thoiGianThi})
+  # data.update({'ngaythi': ngayThi})
+  i = 0
+  for item in dsSV:
+    data = {}
+    i = i + 1
+    data.update({'no': i})
+    data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
+    data.update({'masinhvien': item.maSinhVien.maSinhVien})
+    data.update({'tendonvi': item.maSinhVien.maDonVi.tenDonVi})
+    data.update({'trangthai': item.trangThai})
+    data.update({'lydo': item.lyDo})
+    data.update({'ghichu': item.ghiChu})
+    data.update({'diem': item.diem})
+    data.update({'id': a})
+    datas.append(data)
+
+  return JsonResponse(datas, safe=False)
+
+# Cap nhat thong tin coi thi
+def updateCoiThi(request, s):
+  data = {}
+  a = request.POST['idphong']
+
+  thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
+  thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
+  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
+
   data.update({'thoigian': thoiGian})
-  # return HttpResponse(thoiGian)
-  return render(request, 'coithi/danhsachsinhvien.html', data)
+  data.update({'thoigianthi': thoiGianThi})
+  data.update({'ngaythi': ngayThi})
+  data.update({'id': a})
+
+  if request.method == 'POST':
+    masinhvien = request.POST['masinhvien']
+    trangthai = request.POST['trangthai']
+    lydo = request.POST['lydo']
+    ghichu = request.POST['ghichu']
+
+    print(masinhvien)
+    print(trangthai)
+    print(lydo)
+    print(ghichu)
+    idSV = models.SinhVien.objects.filter(maSinhVien = masinhvien).first().id
+    lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).first()
+
+    lop.trangThai = 'trangthai'
+    lop.lyDo = lydo
+    lop.ghiChu = ghichu
+    lop.save()
+  return render(request, 'coithi/danhsachsinhvien.html')
 
 # Trang cham thi
 def chamthi(request):
