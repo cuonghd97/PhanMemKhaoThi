@@ -13,5 +13,6 @@ urlpatterns = [
   path('ds-phongthi', views.danhsachphongthi),
   path('coithi/<int:a>', views.danhSachSinhVien, name = 'danhsachsv'),
   path('data-sv/<int:a>', views.dataSV),
-  path('capnhat-trangthai/<str:s>', views.updateCoiThi)
+  path('capnhat-trangthai/<str:s>', views.updateCoiThi),
+  path('ds-phongcham', views.dsPhongCham)
 ]

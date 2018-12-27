@@ -159,7 +159,7 @@ def updateCoiThi(request, s):
     idSV = models.SinhVien.objects.filter(maSinhVien = masinhvien).first().id
     lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).first()
 
-    lop.trangThai = 'trangthai'
+    lop.trangThai = trangthai
     lop.lyDo = lydo
     lop.ghiChu = ghichu
     lop.save()
@@ -169,35 +169,37 @@ def updateCoiThi(request, s):
 def chamthi(request):
   if not request.user.is_authenticated:
     return redirect('CoiThi:login')
-  return render(request, 'coithi/chamthi.html')
+  return render(request, 'chamthi/danhsachphong.html')
 
 # Logout
 def user_logout(request):
   logout(request)
   return redirect('CoiThi:login')
 
-# Base
-# def base(request):
-#   return render(request, 'base.html')
+# Cham thi
 
-# Data json don vi
-# def donvidata(request):
-#   donvi = models.DonVi.objects.all().values()
-#   listdonvi = list(donvi)
-#   return JsonResponse(listdonvi, safe=False)
-# Quan ly don vi
-# class QuanLyDonVi(View):
-#   def get(self, request):
-#     return render(request, 'coithi/quanlydonvi.html')
-#   def post(self, request):
-#     madonvi = request.POST.get('MaDonVi')
-#     tedonvi = request.POST.get('TenDonVi')
-#     data = models.DonVi.objects.filter(MaDonVi = madonvi).get()
-#     data.MaDonVi = madonvi
-#     data.TenDonVi = tedonvi
-#     data.save()
-#     return render(request, 'coithi/quanlydonvi.html')
-# def xoadonvi(request, var):
-#   madonvi = request.POST.get('MaDonVi')
-#   models.DonVi.objects.filter(MaDonVi = madonvi).get().delete()
-#   return render(request, 'coithi/quanlydonvi.html')
+# Danh sach phong cham thi
+
+def dsPhongCham(request):
+  datas = []
+  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  kyThiHienTai = models.KyThi.objects.get(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
+  danhSachPhongCham = models.ChamThi.objects.all()
+
+  for item in danhSachPhongCham:
+    if request.user.id == item.canBoCham1.id or request.user.id == item.canBoCham2.id:
+      data = {}
+      tenCanBoCoi1 = item.canBoCham1.tenCanBo
+      tenCanBoCoi2 = item.canBoCham2.tenCanBo
+      ngayCham = item.ngayCham
+      hinhThucThi = item.maPhong.hinhThucThi
+      tenMon = item.maPhong.maLop.maMon.tenMon
+
+      data.update({'idcanbocoi1': tenCanBoCoi1})
+      data.update({'idcanbocoi2': tenCanBoCoi2})
+      data.update({'ngaycham': ngayCham})
+      data.update({'hinhthucthi': hinhThucThi})
+      data.update({'tenmon': tenMon})
+
+      datas.append(data)
+  return JsonResponse(datas, safe=False)

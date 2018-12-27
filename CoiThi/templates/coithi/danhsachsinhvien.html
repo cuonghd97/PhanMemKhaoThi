@@ -99,10 +99,7 @@
 <!-- /page content -->
 {% endblock pagecontent %}
 {% block js %}
-<script>
-  element = document.getElementsByTagName('body')
-  element[0].classList.add('nav-md')
-</script>
+
 <script src="{% static 'build/js/coithi/dssinhvien.js' %}"></script>
 <script>
   thoiGian = '{{ thoigian }}'
@@ -139,6 +136,9 @@
     if (distance < 0) {
       clearInterval(x);
       document.getElementById("demo").innerHTML = "Hết giờ";
+      setTimeout(function() {
+        window.location.replace("http://localhost:8000/danh-sach-phong/")
+      }, 5000)
     }
   }, 1000);
 </script>
