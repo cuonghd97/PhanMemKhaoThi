@@ -24,4 +24,5 @@ urlpatterns = [
   path('thong_ke_ki_thi/', views.thongke, name = 'thongke'),
   path('thong_ke_ki_thi/<int:kithi>', views.thongke_kithi, name = 'thongke'),
   path('manage_add_kithi/', views.manage_add_kithi),
+  path(r'^download/<str:path>/$',views.download,name = 'download'),
 ]

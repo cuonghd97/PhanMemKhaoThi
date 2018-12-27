@@ -28,50 +28,37 @@ Trang quản lý
             <button class="btn btn-round btn-primary" onclick="PrintElem()"  style="float:right;">
                 <i class="fa fa-print"></i> Print
             </button>
-            <a class="btn btn-round btn-primary" href="/media/doc/THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN(LẦN 1).docx"  style="float:right;">
+            <a class="btn btn-round btn-primary" id = "download" href=""  style="float:right;">
               <i class="fa fa-download"></i> Download
             </a>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
               <div class="rows dulieu">
-                  <div class="rows">
-                    <div class="col-md-12"> 
-                      <p><b>&nbsp;&nbsp;&nbsp;&nbsp;HỌC VIỆN AN NINH NHÂN DÂN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			 	CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b></p>
+                  <div class="rows" style="text-align: center">
+                    <div class="col-md-6"> 
+                      <div><p><b>HỌC VIỆN AN NINH NHÂN DÂN </b></p></div>
+                      <div><p><b><u>PHÒNG KHẢO THÍ & ĐBCLĐT</u></b></p></div> 
+                    </div>
+                    <div class="col-md-6"> 
+                      <div><p><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b></p></div>
+                      <div><p><b><u>Độc lập – Tự do – Hạnh phúc</u></b></p></div>
                     </div>
                   </div>
-                  <div class="rows">
-                    <div class="col-md-12"> 
-                      <p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>PHÒNG KHẢO THÍ & ĐBCLĐT</u>
-                      &nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u>Độc lập – Tự do – Hạnh phúc</u></b></p>
-                    </div>
-                  </div>
-                  <div class="rows">
-                    <div class="col-md-12">
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <div class="rows" id="ngay" style="text-align: right">
+                    <div class="col-md-12" >
                     <i>Hà nội, ngày 30 tháng 10 năm 2018</i>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-8" style="text-align: center;">
+                  <div class="rows" style="text-align: center;" id = "Tieude">
+                    <div class="col-md-12" >
                           <br><b>THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN(LẦN 1)</b>
                           <br>
                           <p>Năm học: 2017 – 2018</p>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-8">
+                  <div class="rows">
+                    <div class="col-md-12">
                       <table id="example" class="table table-striped table-bordered dataTable no-footer dtr-inline" role="grid" aria-describedby="datatable-buttons_info" style="width:100%">
                         <thead>
                               <tr>
@@ -95,10 +82,11 @@ Trang quản lý
                       </table>
                     </div>
                   </div>
-                  <div class="rows">
-                    <div class="col-md-8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <div class="rows" style="text-align: center">
+                    <div class="col-md-6">
                     <b>TRƯỞNG PHÒNG</b>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+                    </div>
+                    <div class="col-md-6">
                     <b>CÁN BỘ THỐNG KÊ</b>
                     </div>
                   </div>
@@ -146,8 +134,9 @@ Trang quản lý
             data: {'csrfmiddlewaretoken':token, 
                     'kithi':kithi
                     },
-            success: function(){
+            success: function(data){  
                 get_data();
+                $('#download').attr("href","dowload/"+data.download);  
                 $('#example').DataTable().ajax.reload(null,false);
                 
             }
