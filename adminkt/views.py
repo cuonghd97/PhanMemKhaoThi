@@ -38,7 +38,7 @@ def manage_class(request):
                     l.maKhoa = KhoaHoc.objects.get(id=request.POST['khoa'])
                     l.maMon = Mon.objects.get(id = request.POST['mon'])
                     l.save()
-                
+
         content = {'username': user.username, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all(),'ds_sinhvien':SinhVien.objects.all(),'ds_lop':LopHoc.objects.all()}
         return render(request, 'adminkt/manager_lop.html', content)
     else:
@@ -53,16 +53,16 @@ def manage_class_data(request):
             khoa = '<p id="khoa_{}">{} - {}</p>'.format(lop.id, lop.maKhoa.tenKhoaHoc,lop.maKhoa.he)
             mon = '<p id="mon_{}">{}</p>'.format(lop.id, lop.maMon.tenMon)
             hs = '''
-            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_student"></i> 
+            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_student"></i>
             '''.format(lop.tenLop,ChiTietLop.objects.filter(maLop_id = lop.id).count())
             options = '''
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(lop.id)
             data.append([ten,mon, khoa,hs, options])
@@ -76,7 +76,7 @@ def manage_add_student(request):
             if 'delete' in request.POST:
                 ChiTietLop.objects.get(id=request.POST['delete']).delete()
             elif 'lop' in request.POST:
-                
+
                 if request.POST['kieu'] == 'new':
                     # try:
                     ChiTietLop.objects.create(maLop = LopHoc.objects.get(id = request.POST['lop']) ,maSinhVien=SinhVien.objects.get(id =request.POST['sinhvien']))
@@ -100,13 +100,13 @@ def manage_student_data(request,lop):
                 <div class="btn-group">
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(student.id)
             data.append([fullname, username, tuoi,capham,option])
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
-        return JsonResponse(json_data)  
+        return JsonResponse(json_data)
 
 def manage_donvi(request):
     user = request.user
@@ -127,7 +127,7 @@ def manage_donvi(request):
                     l.tenDonVi = request.POST['ten']
                     l.maDonVi = request.POST['ma']
                     l.save()
-                
+
         content = {'username': user.username}
         return render(request, 'adminkt/manager_donvi.html', content)
     else:
@@ -144,10 +144,10 @@ def manage_donvi_data(request):
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(dv.id)
             data.append([ten,Madv,options])
@@ -164,13 +164,11 @@ def manage_khoa(request):
                 KhoaHoc.objects.get(id=request.POST['delete']).delete()
             else:
                 if request.POST['kieu'] == 'new':
-                    try:
-                        KhoaHoc.objects.create(tenKhoaHoc=request.POST['khoa'], he=request.POST['mo_ta'],maKhoaHoc = request.POST['khoa'] + request.POST['mo_ta'] )
-                    except:
-                        pass
+                    # try:
+                    KhoaHoc.objects.create(tenKhoaHoc=request.POST['khoa'], he=request.POST['he'],)
 
-
-
+                    # except:
+                    #     pass
                 else:
                     nk = KhoaHoc.objects.get(id=request.POST['id'])
                     nk.tenKhoaHoc = request.POST['khoa']
@@ -191,10 +189,10 @@ def manage_khoa_data(request):
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_khoa" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(khoa.id)
             data.append([ten, he, options])
@@ -234,17 +232,17 @@ def manage_mon_data(request):
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_mon" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(mon.id)
             data.append([ma,ten, options])
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
-        
+
 def manage_hocvien(request):
     user = request.user
     content = {'username': user.username, 'ds_donvi': DonVi.objects.all()}
@@ -269,7 +267,7 @@ def manage_hocvien(request):
                     hs.tenSinhVien = request.POST['fullname']
                     hs.maSinhVien = request.POST['ma']
                     hs.tuoi = request.POST['tuoi']
-                    hs.maDonVi = DonVi.objects.get(id = request.POST['donvi']) 
+                    hs.maDonVi = DonVi.objects.get(id = request.POST['donvi'])
                     hs.save()
 
                         # lop = ChiTietLop.objects.get(myuser_id=hs)
@@ -293,7 +291,7 @@ def manage_hocvien(request):
         return render(request, 'adminkt/manager_hocvien.html', content)
     else:
         return HttpResponseRedirect('/')
-    
+
 def manage_hocvien_data(request):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -308,10 +306,10 @@ def manage_hocvien_data(request):
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_student" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button>  
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(sv.id)
             data.append([fullname, masv, tuoi, donvi, options])
@@ -356,7 +354,7 @@ def manager_canbo(request):
                         gv.email = request.POST['email']
                         gv.maCanBo = request.POST['macanbo']
                         gv.maDonVi = DonVi.objects.get(id = request.POST['donvi'])
-                        
+
                         gv.save()
                     except:
                         pass
@@ -405,13 +403,13 @@ def manage_canbo_data(request):
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_teacher" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-warning" data-title="block" id="block_{0}">
                         <i class="{2}" data-toggle="tooltip" title="{3}"></i></i>
-                    </button> 
+                    </button>
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
                 <p hidden id="email_{0}">{1}</p>
             '''.format(teacher.id, teacher.email, icon, title)
@@ -561,7 +559,7 @@ def thongke_kithi(request,kithi):
             ghichu = ''
             row_cells[9].text = ' '
             data.append([str(a),lop, quanso, ngaythi, mon, hinhthuc, tencb1,donvi,quanham,ghichu])
-        
+
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)
         table2.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -583,7 +581,7 @@ def thongke_kithi(request,kithi):
 
 def manager_kithi(request):
     user = request.user
-    content = {'username': user.username,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}  
+    content = {'username': user.username,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
@@ -614,22 +612,22 @@ def manage_kithi_data(request):
             tungay = '<p id="tungay_{}" data-tungay="{}">{}</p>'.format(kt.id,kt.ngayBatDau,kt.ngayBatDau.strftime('%d-%m-%Y'))
             denngay = '<p id="denngay_{0}" data-denngay="{1}">{2}</p>'.format(kt.id,kt.ngayKetThuc,kt.ngayKetThuc.strftime('%d-%m-%Y'))
             ds_phongthi = '''
-            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_room"></i> 
+            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_room"></i>
             '''.format(kt.tenKyThi,PhongThi.objects.filter(maKyThi_id = kt.id).count())
             options = '''
                 <div class="btn-group">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_kithi" data-title="edit" id="edit_{0}">
-                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>   Chỉnh sửa</button> 
+                        <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>   Chỉnh sửa</button>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-title="del" id="del_{0}" data-target="#delete_kithi">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(kt.id)
             data.append([tenkithi, tungay, denngay, ds_phongthi, options])
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
-    
+
 def manage_ki_thi_data(request,kithi):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -648,7 +646,7 @@ def manage_ki_thi_data(request,kithi):
                 <div class="btn-group">
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
-                    </button> 
+                    </button>
                 </div>
             '''.format(room.id)
             data.append([tenphong, vitri, ngaythi,gio,tenlop,canbocoi1,canBoCoi2,option])
@@ -663,7 +661,7 @@ def manage_add_kithi(request):
             if 'delete' in request.POST:
                 PhongThi.objects.get(id=request.POST['delete']).delete()
             elif 'lop' in request.POST:
-                
+
                 if request.POST['kieu'] == 'new':
                     # try:
                     PhongThi.objects.create(maKyThi = KyThi.objects.get(id = request.POST['kithi']) ,
@@ -674,7 +672,7 @@ def manage_add_kithi(request):
                                             viTri = request.POST['vitri'],
                                             ngayThi = request.POST['ngaythi'],
                                             gio = request.POST['gio'])
-                    
+
                     ChamThi.objects.create(maPhong = PhongThi.objects.get(tenPhong = request.POST['tenphong']),
                                            canBoCham1=CanBo.objects.get(id =request.POST['cbcham1']),
                                            canBoCham2=CanBo.objects.get(id =request.POST['cbcham2']) )

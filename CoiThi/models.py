@@ -7,7 +7,6 @@ import datetime
 # Bảng khóa học
 class KhoaHoc(models.Model):
   tenKhoaHoc = models.TextField(max_length=200, null=True)
-  maKhoaHoc = models.CharField(max_length=100, null=True)
   he = models.TextField(max_length=200, null=True)
 
   class Meta:

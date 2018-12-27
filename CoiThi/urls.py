@@ -11,5 +11,7 @@ urlpatterns = [
   path('cham-thi/', views.chamthi, name = 'chamthi'),
   path('logout/', views.user_logout, name = 'logout'),
   path('ds-phongthi', views.danhsachphongthi),
-  path('coithi/<int:a>', views.danhSachSinhVien),
+  path('coithi/<int:a>', views.danhSachSinhVien, name = 'danhsachsv'),
+  path('data-sv/<int:a>', views.dataSV),
+  path('capnhat-trangthai/<str:s>', views.updateCoiThi)
 ]
