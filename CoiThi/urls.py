@@ -7,7 +7,7 @@ app_name = 'CoiThi'
 urlpatterns = [
   path('', views.direct),
   path('login/', views.LoginClass.as_view(), name='login'),
-  path('coi-thi/', views.coithi, name = 'coithi'),
+  path('danh-sach-phong/', views.coithi, name = 'coithi'),
   path('cham-thi/', views.chamthi, name = 'chamthi'),
   path('logout/', views.user_logout, name = 'logout'),
   path('ds-phongthi', views.danhsachphongthi),

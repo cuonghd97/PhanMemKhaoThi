@@ -38,41 +38,44 @@ def coithi(request):
   if not request.user.is_authenticated:
     return redirect('CoiThi:login')
   data = {'name': request.user.tenCanBo}
-  return render(request, 'coithi/coithi.html', data)
+  return render(request, 'coithi/dsphong.html', data)
 
 # Danh sach cac phong thi
 def danhsachphongthi(request):
-  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
-  kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai).first()
-  danhSachPhongThi = models.PhongThi.objects.all()
   datas = []
-  for item in danhSachPhongThi:
-    if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
-      if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
-        data = {}
-        tenLop = item.maLop.tenLop
-        monHoc = item.maLop.maMon.tenMon
-        idCanBoCoi1 = item.canBoCoi1.id
-        idCanBoCoi2 = item.canBoCoi2.id
-        idPhong = item.id
-        tenPhong = item.tenPhong
-        thoiGian = item.gio
-        thoiGianThi = item.thoiGianThi
-        role = item.role
-        ngayThi = item.ngayThi
+  try:
+    ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+    kyThiHienTai = models.KyThi.objects.get(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
+    danhSachPhongThi = models.PhongThi.objects.all()
+    for item in danhSachPhongThi:
+      if item.ngayThi >= kyThiHienTai.ngayBatDau and item.ngayThi <= kyThiHienTai.ngayKetThuc:
+        if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
+          data = {}
+          tenLop = item.maLop.tenLop
+          monHoc = item.maLop.maMon.tenMon
+          idCanBoCoi1 = item.canBoCoi1.id
+          idCanBoCoi2 = item.canBoCoi2.id
+          idPhong = item.id
+          tenPhong = item.tenPhong
+          thoiGian = item.gio.strftime('%H:%M')
+          thoiGianThi = item.thoiGianThi
+          role = item.role
+          ngayThi = item.ngayThi
 
-        data.update({'tenlop': tenLop})
-        data.update({'monthi': monHoc})
-        data.update({'idcanbocoi1': idCanBoCoi1})
-        data.update({'idcanbocoi2': idCanBoCoi2})
-        data.update({'id': idPhong})
-        data.update({'tenphong': tenPhong})
-        data.update({'gio': thoiGian})
-        data.update({'thoigianthi': thoiGianThi})
-        data.update({'role': role})
-        data.update({'ngaythi': ngayThi})
+          data.update({'tenlop': tenLop})
+          data.update({'monthi': monHoc})
+          data.update({'idcanbocoi1': idCanBoCoi1})
+          data.update({'idcanbocoi2': idCanBoCoi2})
+          data.update({'id': idPhong})
+          data.update({'tenphong': tenPhong})
+          data.update({'gio': thoiGian})
+          data.update({'thoigianthi': thoiGianThi})
+          data.update({'role': role})
+          data.update({'ngaythi': ngayThi})
 
-        datas.append(data)
+          datas.append(data)
+  except:
+    pass
   return JsonResponse(datas, safe=False)
 
 
@@ -83,9 +86,14 @@ def danhSachSinhVien(request, a):
   idLop = models.LopHoc.objects.filter(id = idPhong).first()
   dsSV = models.ChiTietLop.objects.filter(maLop = idLop.id)
   data = {'sinhvien': dsSV}
+
   thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
   thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
+  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
+
   data.update({'thoigian': thoiGian})
+  data.update({'thoigianthi': thoiGianThi})
+  data.update({'ngaythi': ngayThi})
   # return HttpResponse(thoiGian)
   return render(request, 'coithi/danhsachsinhvien.html', data)
 
