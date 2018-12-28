@@ -10,7 +10,7 @@
   <div class="">
     <div class="page-title">
       <div class="title_left">
-        <h3>Danh sách sinh viên</h3> <span><h3>Thời gian còn lại: <span id="demo"></span></h3></span>
+        <h3>Danh sách sinh viên thi môn <span id='subject'>{{ tenmon }}</span></h3> <span><h3>Thời gian còn lại: <span id="demo"></span></h3></span>
       </div>
     </div>
 
@@ -28,13 +28,13 @@
               <thead>
                 <tr>
                   <th>STT</th>
-                  <th>ten sinh vien</th>
-                  <th>ma sinh vien</th>
-                  <th>don vi</th>
-                  <th>trang thai</th>
-                  <th>ly do</th>
-                  <th>ghi chu</th>
-                  <th>diem</th>
+                  <th>Tên sinh viên</th>
+                  <th>Mã sinh viên</th>
+                  <th>Đơn vị</th>
+                  <th>Trạng thái</th>
+                  <th>Lý do</th>
+                  <th>Ghi chú</th>
+                  <th>Điểm</th>
                   <th>Sửa</th>
                 </tr>
               </thead>
@@ -66,9 +66,8 @@
               <td>
                 <select name="" id="trangthai" class="form-control">
                   <option value="">-- Chọn --</option>
-                  <option value="">Cấm thi</option>
                   <option value="">Hoãn thi</option>
-                  <option value="">Nghỉ thi</option>
+                  <option value="">Vi phạm</option>
                 </select>
               </td>
             </tr>
@@ -85,6 +84,7 @@
               </td>
               <input type="hidden" name="masinhvien" id="masinhvien">
               <input type="hidden" name="id" id="id">
+              <input type="hidden" name="mamon" id="mamon">
             </tr>
           </table>
       </div>
@@ -137,7 +137,7 @@
       clearInterval(x);
       document.getElementById("demo").innerHTML = "Hết giờ";
       setTimeout(function() {
-        window.location.replace("http://localhost:8000/danh-sach-phong/")
+        //window.location.replace("http://localhost:8000/danh-sach-phong/")
       }, 5000)
     }
   }, 1000);
@@ -195,6 +195,7 @@
       $('#ghichu').val(data['ghichu'])
       $('#masinhvien').val(data['masinhvien'])
       $('#id').val(data['id'])
+      $('#mamon').val(data['mamon'])
       $(this).attr('data-toggle', 'modal').attr('data-target', '#exampleModal')
     })
 
@@ -203,8 +204,8 @@
       var trangthai = $('#trangthai option:selected').text()
       var lydo = $('#lydo').val()
       var ghichu = $('#ghichu').val()
-      var idphong = $('#id').val()
-      console.log(idphong)
+      var idphong = id
+      var mamon = $('#mamon').val()
 
       $.ajax({
         type: 'POST',
@@ -215,6 +216,7 @@
           'lydo': lydo,
           'ghichu': ghichu,
           'idphong': idphong,
+          'mamon': mamon,
           csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
         },
         success: function() {

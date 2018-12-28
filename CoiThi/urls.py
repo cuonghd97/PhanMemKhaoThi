@@ -16,5 +16,6 @@ urlpatterns = [
   path('capnhat-trangthai/<str:s>', views.updateCoiThi),
   path('ds-phongcham', views.dsPhongCham),
   path('cham-thi/chamtay/<int:a>', views.ChamTay),
+  path('cham-thi/chamtay/post-tay', views.ChamDiem),
   path('cham-thi/chamtudong/<int:a>', views.ChamTuDong)
 ]
