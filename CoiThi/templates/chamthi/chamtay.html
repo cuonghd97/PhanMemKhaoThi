@@ -35,6 +35,7 @@
                   <th>STT</th>
                   <th>Tên sinh viên</th>
                   <th>Mã sinh viên</th>
+                  <th>Môn thi</th>
                   <th>Đơn vị</th>
                   <th>Trạng thái</th>
                   <th>Lý do</th>
@@ -65,7 +66,8 @@
           "ajax": {
               "type": "GET",
               "url": "/data-sv/" + id,
-              "dataSrc": ""
+              "dataSrc": "",
+              "async": "false"
           },
           "columns": [
               {
@@ -76,6 +78,9 @@
               },
               {
                 "data": "masinhvien",
+              },
+              {
+                "data": "monhoc"
               },
               {
                 "data": "tendonvi"
@@ -92,15 +97,36 @@
           ],
           "columnDefs":[
             {
-              "targets": 7,
+              "targets": 8,
               "width": "10%",
               "data": null,
-              "defaultContent":`<input type='text' class='form-control diem' />`
+              "defaultContent":`{% csrf_token %}<input type='number' class='form-control diem' />`
             }
           ],
           createdRow: function(row, data, dataIndex) {
-            $(row).find('input').attr('data-id', data["id"])
+            $(row).find('.diem').attr('data-idsv', data["idsv"]).attr('data-idmon', data['mamon']).attr('id', 'cham').attr('data-idlop', data['idlop']).val(data['diem'])
+          },
+      })
+
+      $('.danhsachsinhvien').on('blur', 'input', function(e) {
+        var idsv = $(this).data('idsv')
+        var idlop = $(this).data('idlop')
+        var diem = $(this).val()
+        console.log(diem)
+
+        $.ajax({
+          type: 'POST',
+          url: 'post-tay',
+          data: {
+            'idsv': idsv,
+            'idlop': idlop,
+            'diem': diem,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+          },
+          success: function() {
+            console.log('success')
           }
+        })
       })
       //$.ajax({
       //  type: 'POST',

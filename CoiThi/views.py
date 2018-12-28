@@ -92,20 +92,27 @@ def danhSachSinhVien(request, a):
   thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
   thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
   ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
+  tenmon = models.PhongThi.objects.get(id = a).maLop.maMon.tenMon
 
   data.update({'thoigian': thoiGian})
   data.update({'thoigianthi': thoiGianThi})
   data.update({'ngaythi': ngayThi})
   data.update({'id': a})
+  data.update({'tenmon': tenmon})
+
   return render(request, 'coithi/danhsachsinhvien.html', data)
 
 # Data danh sach sinh vien
 def dataSV(request, a):
   datas = []
   idPhong = models.PhongThi.objects.get(id = a).maLop.id
-  # return HttpResponse(idPhong)
+  print(idPhong)
   idLop = models.LopHoc.objects.filter(id = idPhong).first()
+  print(idLop.id)
+  tenMon = idLop.maMon.tenMon
+  maMon = idLop.maMon.id
   dsSV = models.ChiTietLop.objects.filter(maLop = idLop.id)
+  # return HttpResponse(dsSV)
   # data = {'sinhvien': dsSV}
 
   thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
@@ -120,6 +127,7 @@ def dataSV(request, a):
     data = {}
     i = i + 1
     data.update({'no': i})
+    data.update({'idlop': idLop.id})
     data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
     data.update({'masinhvien': item.maSinhVien.maSinhVien})
     data.update({'tendonvi': item.maSinhVien.maDonVi.tenDonVi})
@@ -128,6 +136,10 @@ def dataSV(request, a):
     data.update({'ghichu': item.ghiChu})
     data.update({'diem': item.diem})
     data.update({'id': a})
+    data.update({'monhoc': tenMon})
+    data.update({'mamon': maMon})
+    data.update({'idsv': item.maSinhVien.id})
+
     datas.append(data)
 
   return JsonResponse(datas, safe=False)
@@ -149,16 +161,16 @@ def updateCoiThi(request, s):
   if request.method == 'POST':
     masinhvien = request.POST['masinhvien']
     trangthai = request.POST['trangthai']
+    print(trangthai)
     lydo = request.POST['lydo']
     ghichu = request.POST['ghichu']
 
-    print(masinhvien)
-    print(trangthai)
-    print(lydo)
-    print(ghichu)
+    idPhong = models.PhongThi.objects.get(id = request.POST['idphong']).maLop.id
+    lopID = models.LopHoc.objects.filter(maMon = request.POST['mamon']).first().id
     idSV = models.SinhVien.objects.filter(maSinhVien = masinhvien).first().id
-    lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).first()
-
+    lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).filter(maLop = lopID).first()
+    # print(idSV)
+    # print(lop)
     lop.trangThai = trangthai
     lop.lyDo = lydo
     lop.ghiChu = ghichu
@@ -216,5 +228,12 @@ def ChamTay(request, a):
   data = {'id': a}
   return render(request, 'chamthi/chamtay.html', data)
 
+def ChamDiem(request):
+  SV = models.ChiTietLop.objects.filter(maLop = request.POST['idlop']).filter(maSinhVien = request.POST['idsv']).first()
+  SV.diem = request.POST['diem']
+  SV.save()
+  return HttpResponse('/')
+
 def ChamTuDong(request, a):
-  return HttpResponse('cham tu dong')
+  data = {'id': a}
+  return render(request, 'chamthi/chamtudong.html', data)
