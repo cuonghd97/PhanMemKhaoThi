@@ -16,7 +16,7 @@ Trang quản lý
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="x_panel">
         <div class="x_title">
-          <div class="col-md-4">
+          <div class="col-md-3">
             {% csrf_token %}
             <input list="lskithi" type="text" class="form-control has-feedback-left" name="tenkithi" required
               placeholder="Tên kì thi">
@@ -26,7 +26,20 @@ Trang quản lý
               <option data-kt="{{k.id}}">{{k.tenKyThi}}</option>
               {% endfor %}
             </datalist>
+            
           </div>
+          <div class="col-md-4">
+              <select name="thongke" class="form-control has-feedback-left" style="float: left;" >
+                  <option value="1">Thống kê học viên vi phạm</option>
+                  <option value="2">Thống kê học viên trượt</option>
+                  <option value="3">Thống kê học viên chưa thi</option>
+                </select>
+          </div>
+          <div class="col-md-2">
+              <a class="btn btn-round btn-primary" id="submit" style="float: left;">
+                  Thống kê
+              </a>
+          </div>  
           <button class="btn btn-round btn-primary" onclick="PrintElem()" style="float:right;">
             <i class="fa fa-print"></i> Print
           </button>
@@ -48,7 +61,7 @@ Trang quản lý
               </div>
               <div class="col-md-6">
                 <div>
-                  <p><b>THỐNG KÊ CÁN BỘ COI THI HỌC PHẦN</b></p>
+                  <p><b>THỐNG KÊ SỐ LIỆU HỌC VIÊN VI PHẠM</b></p>
                 </div>
                 <div>
                   <p><b>HỌC KỲ……, NĂM HỌC 20…. – 20….</b></p>
@@ -76,24 +89,20 @@ Trang quản lý
                     <tr>
                       <th rowspan="2">TT</th>
                       <th rowspan="2">Lớp</th>
-                      <th rowspan="2">Quân số</th>
                       <th rowspan="2">Ngày thi</th>
                       <th rowspan="2">Môn thi</th>
                       <th rowspan="2">Hình thức thi</th>
-                      <th colspan="3" style="text-align: center;">Cán bộ coi thi 1</th>
-                      <th colspan="3" style="text-align: center;">Cán bộ coi thi 2</th>
+                      <th colspan="2" style="text-align: center;">Học viên vi phạm</th>
                       <th rowspan="2">Ghi chú</th>
                     </tr>
                     <tr>
                       <th>Họ và tên</th>
-                      <th>Đơn vị</th>
-                      <th>Cấp hàm</th>
-                      <th>Họ và tên</th>
-                      <th>Đơn vị</th>
-                      <th>Cấp hàm</th>
+                      <th>Hình thức xử lý</th>
+                      
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id= "data_dulieu">
+                    <tr></tr>
                   </tbody>
                 </table>
               </div>
@@ -110,7 +119,7 @@ Trang quản lý
                   <div class="col-md-3"></div>
                 </div>
               </div>
-              <div class="rows">
+              <!-- <div class="rows">
                   <div class="col-md-12">
                     <div class="col-md-3">
                       
@@ -119,7 +128,7 @@ Trang quản lý
                       <p id='sohocvien'></p>
                     </div>
                   </div>
-                </div>
+                </div> -->
             </div>
             <!-- <div class="rows" style="text-align: left;">
               <div class="col-md-3">
@@ -151,22 +160,7 @@ Trang quản lý
 {% block js %}
 <script type="text/javascript">
   $(document).ready(function () {
-    function get_data() {
-      $('#example').DataTable({
-        "ajax": {
-          "type": "GET",
-          "url": '/adminkt/thong_ke_coi_thi/' + kithi,
-          "contentType": "application/json; charset=utf-8",
-          "data": function (result) {
-            return JSON.stringify(result);
-          },
-        },
-        searching: false, paging: false, info: false,
-        "displayLength": 10,
-
-      });
-    }
-    $('input[name=tenkithi]').on('change', function () {
+    $('#submit').on('click', function () {
       var token = $("input[name=csrfmiddlewaretoken]").val();
       kithi = '';
       $("#lskithi option").each(function () {
@@ -179,29 +173,39 @@ Trang quản lý
         alert("Kì thi không chính xác");
         return false;
       }
-
+      var thongke = $('select[name=thongke]').val()
       $.ajax({
         type: 'POST',
-        url: '/adminkt/thong_ke_coi_thi/' + kithi,
+        url: '/adminkt/thong_ke_ki_thi/' + kithi,
         data: {
           'csrfmiddlewaretoken': token,
-          'kithi': kithi
+          'kithi': kithi,
+          'thongke':thongke,
         },
         beforeSend: function () {
           // Show image container
           $("#loader").show();
         },
         success: function (data) {
-          get_data();
+          
+            
+            // console.log(data);
+            // $('#example').DataTable({
+            //   "ajax": data,
+            //   searching: false, paging: false, info: false,
+            //   "displayLength": 10,
+            // })
+            
+          $.each(data.data[0],function(key , value){
+            // $('#data_dulieu').append($('<tr></tr>').attr('class','data'+key))
+            $('#data_dulieu tr').append($('<td></td>').html(value))
+          });
           $('#loading-image').hide();
           $('#download').attr("href", "/adminkt/download/" + data.download);
-          $('#example').DataTable().ajax.reload(null, false);
-          $('#solop').html('Có ' + data.solop + ' lượt lớp thi KTHP')
-          $('#sohocvien').html('Có ' + data.sohocvien + ' học viên dự thi KTHP')
-
+          // $('#example').DataTable().ajax.reload(null, false);
+          $('#solop').html('Có ' + data.so + ' học viên vi phạm quy chế thi')
         },
         complete: function (data) {
-          // Hide image container
           $("#loader").hide();
         }
       });

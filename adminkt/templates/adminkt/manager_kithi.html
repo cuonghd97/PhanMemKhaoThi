@@ -160,7 +160,7 @@ Quản lý kì thi
                   <span class="fa fa-home form-control-feedback left" aria-hidden="true"></span>
                   <datalist id="lsl">
                       {% for k in ds_lop %}
-                      <option data-lop="{{k.id}}">{{k.tenLop}}</option>
+                      <option data-lop="{{k.id}}">{{k.tenLop }} - {{k.maMon.tenMon}}</option>
                       {% endfor %}  
                     </datalist>
               </div>

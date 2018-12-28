@@ -439,6 +439,13 @@ def thongke_coi(request):
         return render(request, 'adminkt/thongkecoi.html', content)
     else:
         return HttpResponseRedirect('/')
+def thongke_all(request):
+    user = request.user
+    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        return render(request, 'adminkt/thongkekithi.html', content)
+    else:
+        return HttpResponseRedirect('/')
 def thongke_kithi(request,kithi):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -808,10 +815,11 @@ def thongke_kithi_coi(request,kithi):
         cel_meger7 = '\n'.join(
             cell.text for cell in hdr_cells1 if cell.text
         )
+        b = 0
         for pt in ls_pt:
             row_cells = table.add_row().cells
             a = a + 1
-            row_cells[0].text = str(a)
+            b += ChiTietLop.objects.all().filter(maLop = pt.maLop).exclude(trangThai ='Hoãn thi').count()
             lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
             row_cells[1].text = pt.maLop.tenLop
             quanso = '<p id="quanso_{0}">{1}</p>'.format(pt.id,ChiTietLop.objects.filter(maLop = pt.maLop).count())
@@ -850,7 +858,151 @@ def thongke_kithi_coi(request,kithi):
         path = 'media/doc/'+Tieude +'.docx'
         file = Tieude +'.docx'
         document.save(path)
-        big_data = {"data": data,'download' : file}
+        big_data = {"data": data,'download' : file,'solop': a ,'sohocvien': b}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+    else:
+        return HttpResponseRedirect('/')
+
+def thongke_kithi_all(request,kithi):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        ls_kt = KyThi.objects.get(id = kithi)
+        ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
+        if(request.POST['thongke'] == '1'):
+            ls_sv = ChiTietLop.objects.all().filter(trangThai = 'Vi phạm')
+        elif(request.POST['thongke'] == '3'):
+            ls_sv = ChiTietLop.objects.all().filter(trangThai = 'Hoãn thi')
+        else:
+            ls_sv = ChiTietLop.objects.all().filter(diem < 5,trangThai= '')
+        data = []
+        a = 0
+        document = Document()
+        style = document.styles['Normal']
+        font = style.font
+        font.name = 'Time New Roman'
+        font.size = Pt(14)
+        section = document.sections[0]
+        section.page_height = Mm(297)
+        section.page_width = Mm(210)
+        section.left_margin = Mm(15)
+        section.right_margin = Mm(15)
+
+        table1 = document.add_table(rows=1, cols=2)
+        table1.alignment = WD_TABLE_ALIGNMENT.CENTER
+        hdr_cells = table1.rows[0].cells
+        paragraph = hdr_cells[0].paragraphs[0]
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = paragraph.add_run('HỌC VIỆN AN NINH NHÂN DÂN')
+        run.bold = True
+        run.add_break()
+        run1 = paragraph.add_run('PHÒNG KHẢO THÍ & ĐBCLĐT')
+        run1.bold = True
+        run1.underline = True
+        # cell.add_paragraph('')0
+        # cell.add_run('HỌC VIỆN AN NINH NHÂN DÂN').bodl
+        paragraph1 = hdr_cells[1].paragraphs[0]
+        paragraph1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run2 = paragraph1.add_run('THỐNG KÊ CÁN BỘ COI THI HỌC PHẦN')
+        run2.bold = True
+        run2.add_break()
+        run3 = paragraph1.add_run('HỌC KỲ……, NĂM HỌC 20…. – 20….')
+        run3.bold = True
+        run3.underline = True
+        Tieude = 'THỐNG KÊ COI THI KẾT THÚC HỌC PHẦN'
+        body_text_style = document.styles['Table Grid']
+        table = document.add_table(rows=2, cols=10,style = body_text_style)
+        hdr_cells1 = table.rows[0].cells
+        hdr_cells2 = table.rows[1].cells
+
+        hdr_cells1[0].text = 'TT'
+        cel_meger0 = hdr_cells1[0].merge(hdr_cells2[0])
+        cel_meger0 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[1].text = 'Lớp'
+        cel_meger1 = hdr_cells1[1].merge(hdr_cells2[1])
+        cel_meger1 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[2].text = 'Quân số'
+        cel_meger2 = hdr_cells1[2].merge(hdr_cells2[2])
+        cel_meger2 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[3].text = 'Ngày thi'
+        cel_meger3 = hdr_cells1[3].merge(hdr_cells2[3])
+        cel_meger3 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[4].text = 'Môn thi'
+        cel_meger4 = hdr_cells1[4].merge(hdr_cells2[4])
+        cel_meger4 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[5].text = 'Hình thức thi'
+        cel_meger5 = hdr_cells1[5].merge(hdr_cells2[5])
+        cel_meger5 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells1[6].text = 'Cán bộ chấm thi'
+        cel_meger6 = hdr_cells1[6].merge(hdr_cells1[7].merge(hdr_cells1[8]))
+        cel_meger6 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        hdr_cells2[6].text = 'Họ và tên'
+        hdr_cells2[7].text = 'Đơn vị'
+        hdr_cells2[8].text = 'Cấp hàm'
+
+        hdr_cells1[9].text = 'Ghi chú'
+        cel_meger7 = hdr_cells1[9].merge(hdr_cells2[9])
+        cel_meger7 = '\n'.join(
+            cell.text for cell in hdr_cells1 if cell.text
+        )
+        b = 0
+        for pt in ls_sv:
+            # row_cells = table.add_row().cells
+            a = a + 1
+            lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
+            # row_cells[1].text = pt.maLop.tenLop
+            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
+            # row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
+            mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
+            # row_cells[4].text = pt.maLop.maMon.tenMon
+            hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
+            # row_cells[5].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
+            tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
+            # row_cells[6].text = pt.maSinhVien.tenSinhVien
+            # cells[7].text = pt.canBoCoi1.maDonVi.tenDonVi
+            lydo = ''
+            if(request.POST['thongke'] == 1):
+                lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
+            elif(request.POST['thongke'] == 3):
+                lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
+            else:
+                lydo = '<p id="diem_{0}">{1}</p>'.format(pt.id,pt.diem)
+            
+            # row_cells[8].text = pt.lyDo
+            ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
+            # row_cells[9].text = ' '
+            data.append([str(a),lop, ngaythi, mon, hinhthuc, tensv,lydo,ghichu])
+
+        document.add_paragraph().add_run().add_break()
+        table2 = document.add_table(rows=1, cols=2)
+        table2.alignment = WD_TABLE_ALIGNMENT.CENTER
+        hdr_cells = table2.rows[0].cells
+        paragraph6 = hdr_cells[0].paragraphs[0]
+        paragraph6.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run5 = paragraph6.add_run('TRƯỞNG PHÒNG')
+        run5.bold = True
+        paragraph7 = hdr_cells[1].paragraphs[0]
+        paragraph7.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run6 = paragraph7.add_run('CÁN BỘ THỐNG KÊ')
+        run6.bold = True
+        path = 'media/doc/'+Tieude +'.docx'
+        file = Tieude +'.docx'
+        document.save(path)
+        big_data = {"data": data,'download' : file,'so': a }
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
     else:

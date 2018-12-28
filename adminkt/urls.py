@@ -24,8 +24,10 @@ urlpatterns = [
   path('manage_can_bo_data/', views.manage_canbo_data),
   path('thong_ke_ki_thi/', views.thongke, name = 'thongke'),
   path('thong_ke_coi_thi/', views.thongke_coi, name = 'thongkecoi'),
+  path('thong_ke_ki_thi_all/', views.thongke_all, name = 'thongke_kithi'),
   path('thong_ke_cham_thi/<int:kithi>', views.thongke_kithi, name = 'thongkecham'),
   path('thong_ke_coi_thi/<int:kithi>', views.thongke_kithi_coi, name = 'thongkecoithi'),
+  path('thong_ke_ki_thi/<int:kithi>', views.thongke_kithi_all, name = 'thongke_all'),
   path('manage_add_kithi/', views.manage_add_kithi),
   path('download/<str:pathdoc>',views.download),
 ]
