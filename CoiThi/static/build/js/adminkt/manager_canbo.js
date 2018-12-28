@@ -27,7 +27,7 @@ $(document).ready(function(){
             var quanham = $("#quanham_"+gvid).text();
             $("#new_teacher input[name=quanham]").val(quanham);
             var macb = $("#macb_"+gvid).text();
-            $("#new_teacher input[name=ma]").val(macb);
+            $("#new_teacher input[name=macanbo]").val(macb);
             var username = $("#user_"+gvid).text();
             $("#new_teacher input[name=username]").val(username);
             $("#new_teacher input[name=username]").prop("readonly", true);

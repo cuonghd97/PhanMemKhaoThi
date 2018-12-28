@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 app_name = 'adminkt'
@@ -22,7 +23,9 @@ urlpatterns = [
   path('manage_can_bo/', views.manager_canbo, name = 'quanly_canbo'),
   path('manage_can_bo_data/', views.manage_canbo_data),
   path('thong_ke_ki_thi/', views.thongke, name = 'thongke'),
-  path('thong_ke_ki_thi/<int:kithi>', views.thongke_kithi, name = 'thongke'),
+  path('thong_ke_coi_thi/', views.thongke_coi, name = 'thongkecoi'),
+  path('thong_ke_cham_thi/<int:kithi>', views.thongke_kithi, name = 'thongkecham'),
+  path('thong_ke_coi_thi/<int:kithi>', views.thongke_kithi_coi, name = 'thongkecoithi'),
   path('manage_add_kithi/', views.manage_add_kithi),
-  path(r'^download/<str:path>/$',views.download,name = 'download'),
+  path('download/<str:pathdoc>',views.download),
 ]

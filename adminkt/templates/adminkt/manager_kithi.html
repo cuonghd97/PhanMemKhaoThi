@@ -152,12 +152,25 @@ Quản lý kì thi
                   <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
               </div>
               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                  <input type="number" class="form-control has-feedback-left" name="thoiGianthi" value="60" required >
+                  <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
                   <input list="lsl" type="text" class="form-control has-feedback-left" name="tenlop" placeholder="Lớp" required >
                   <span class="fa fa-home form-control-feedback left" aria-hidden="true"></span>
                   <datalist id="lsl">
                       {% for k in ds_lop %}
                       <option data-lop="{{k.id}}">{{k.tenLop}}</option>
                       {% endfor %}  
+                    </datalist>
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                  <input list="lsht" type="text" class="form-control has-feedback-left" name="hinhthuc" placeholder="Hình thức thi" required >
+                  <span class="fa fa-home form-control-feedback left" aria-hidden="true"></span>
+                  <datalist id="lsht">
+                      <option>Tự luận</option>
+                      <option>Trắc nghiệm</option>
+                      <option>Vấn đáp</option>
                     </datalist>
               </div>
               <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">

@@ -107,6 +107,18 @@ $(document).ready(function() {
         var vitri = $("#add_room input[name=vitri]").val();
         var gio = $("#add_room input[name=gio]").val();
         var ngaythi = $("#add_room input[name=ngaythi]").val();
+        var thoiGianthi = $("#add_room input[name= thoiGianthi]").val();
+        hinhthuc = '';
+        $("#lsht option").each(function(){
+            if($("#add_room input[name=hinhthuc").val() == $(this).val()){
+                hinhthuc = $("#add_room input[name=hinhthuc").val();
+                return false;
+            }
+        });
+        if(hinhthuc == ''){
+            alert("Hình thức thi không chính xác");
+            return false;
+        }
         kithi = '';
         $("#lskithi option").each(function(){
             if($("#add_room input[name=tenkithi]").val() == $(this).val()){
@@ -181,7 +193,8 @@ $(document).ready(function() {
             data: {'csrfmiddlewaretoken':token,'kieu':kieu, 'lop':lop, 
                     'kithi':kithi,'cbc1':cbc1,'cbc2':cbc2,
                     'cbcham1':canbocham1 ,'cbcham2':canbocham2,
-                    'tenphong':tenphong,'vitri':vitri,'ngaythi':ngaythi,'gio':gio
+                    'tenphong':tenphong,'vitri':vitri,'ngaythi':ngaythi,'gio':gio,
+                    'hinhthuc':hinhthuc,'thoigian':thoiGianthi
                     },
             success: function(){
                 $("#add_room").modal("hide");

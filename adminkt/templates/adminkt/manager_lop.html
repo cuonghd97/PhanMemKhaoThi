@@ -141,7 +141,7 @@ Quản lý lớp
             <span class="fa fa-home form-control-feedback left" aria-hidden="true"></span>
             <datalist id="lsl">
               {% for k in ds_lop %}
-              <option data-lop="{{k.id}}">{{k.tenLop}}</option>
+              <option data-lop="{{k.id}}">{{k.tenLop}} - {{k.maKhoa.tenKhoaHoc}}</option>
               {% endfor %}  
             </datalist>
           </div>
