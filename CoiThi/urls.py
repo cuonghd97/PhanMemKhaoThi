@@ -7,15 +7,14 @@ app_name = 'CoiThi'
 urlpatterns = [
   path('', views.direct),
   path('login/', views.LoginClass.as_view(), name='login'),
-  path('danh-sach-phong/', views.coithi, name = 'coithi'),
-  path('cham-thi/', views.chamthi, name = 'chamthi'),
+  path('danh-sach-ky-thi/', views.DanhSachKyThi, name='danhsachkythi'),
   path('logout/', views.user_logout, name = 'logout'),
-  path('ds-phongthi', views.danhsachphongthi),
-  path('coithi/<int:a>', views.danhSachSinhVien, name = 'danhsachsv'),
-  path('data-sv/<int:a>', views.dataSV),
-  path('capnhat-trangthai/<str:s>', views.updateCoiThi),
-  path('ds-phongcham', views.dsPhongCham),
-  path('cham-thi/chamtay/<int:a>', views.ChamTay),
-  path('cham-thi/chamtay/post-tay', views.ChamDiem),
-  path('cham-thi/chamtudong/<int:a>', views.ChamTuDong)
+  path('data-kythi', views.DataKyThi),
+  path('data-phong/<int:idKyThi>', views.DataPhong),
+  path('danh-sach-phong/<int:idKyThi>', views.DanhSachPhong, name='danhsachphong'),
+  path('data-sv/<int:idPhong>', views.dataSV),
+  path('danh-sach-phong/phong/<int:idPhong>', views.DanhSachSV),
+  path('capnhat-trangthai/', views.updateCoiThi),
+  path('cham-tay/<int:a>', views.ChamTay, name='nhapdiembangtay'),
+  path('cham-tay/post-diem/', views.ChamDiem)
 ]
