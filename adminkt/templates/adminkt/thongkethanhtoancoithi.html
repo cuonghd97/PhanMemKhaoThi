@@ -109,7 +109,7 @@ Trang quản lý
 {% block js %}
 <script type="text/javascript">
   $(document).ready(function () {
-    function get_data(kithi) {
+     function get_data(dulieu) {
       $('#example').DataTable({
         "ajax": {
           "type": "GET",
@@ -118,13 +118,26 @@ Trang quản lý
           "data": function (result) {
             return JSON.stringify(result);
           },
+          "complete" : function(dulieu){
+            element = `<tr>
+                    <td>#</td>
+                    <td colspan="3">Tổng</td>
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>`
+          $('#example').append(element)
+          },
         },
         searching: false, paging: false, info: false,
         "destroy": true,
       });
     }
+
     $('input[name=tenkithi]').on('change', function () {
-      // $('#example').DataTable().clear().draw();
       var token = $("input[name=csrfmiddlewaretoken]").val();
       kithi = '';
       $("#lskithi option").each(function () {
@@ -146,10 +159,10 @@ Trang quản lý
           'kithi': kithi
         },
         success: function (data) {
-          get_data(kithi);
-          // $('#loading-image').hide();
+          get_data(data);
           $('#download').attr("href", "/adminkt/download/" + data.download);
-          $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP')
+          $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP');
+          
         },
       });
     });

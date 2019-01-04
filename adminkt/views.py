@@ -725,6 +725,7 @@ def thongke_thanhtoan_coi(request,kithi):
             cell.text for cell in hdr_cells1 if cell.text
         )
         lis =[]
+        tongsobuoi = 0
         for pt in ls_pt:
             lis.append(pt.canBoCoi1.id)
             lis.append(pt.canBoCoi2.id)
@@ -741,6 +742,7 @@ def thongke_thanhtoan_coi(request,kithi):
             row_cells[3].text = CanBo.objects.get(id = x).quanHam
             sobuoi = '<p id="sobuoi_{0}">{1}</p>'.format(x,lis.count(x))
             row_cells[4].text = str(lis.count(x))
+            tongsobuoi += int(lis.count(x))
             giabieu = '<p id="giabieu_{0}">{1}</p>'.format(x,'60000')
             row_cells[5].text = str('60000')
             thanhtien = '<p id="thanhtien_{0}">{1}</p>'.format(x,lis.count(x)*60000)
@@ -768,7 +770,7 @@ def thongke_thanhtoan_coi(request,kithi):
         path = 'media/doc/'+Tieude +'.docx'
         file = Tieude +'.docx'
         document.save(path)
-        big_data = {"data": data,'download' : file}
+        big_data = {"data": data,'download' : file,"sobuoi" : tongsobuoi,"tongtien":str(tongsobuoi*60000),"tongthue":str(int(tongsobuoi*60000*0.1)),"tonglinh" : str(int(tongsobuoi*60000*0.9))}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
     else:
