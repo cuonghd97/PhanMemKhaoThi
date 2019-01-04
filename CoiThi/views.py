@@ -18,7 +18,7 @@ def direct(request):
 # Login
 class LoginClass(View):
   def get(self, request):
-    return render(request, 'coithi/login.html')
+    return render(request, 'login.html')
   def post(self, request):
     username = request.POST.get('username')
     password = request.POST.get('password')
@@ -36,6 +36,7 @@ def DanhSachKyThi(request):
   if not request.user.is_authenticated:
     return redirect('CoiThi:login')
   data = {'name': request.user.tenCanBo}
+  data.update({'id': request.user.id})
   return render(request, 'danhsachkythi.html', data)
 
 # Danh sach ky thi hien tai
@@ -137,24 +138,8 @@ def DataPhong(request, idKyThi):
 # Danh sach phong
 def DanhSachPhong(request, idKyThi):
   data = {'idKyThi': idKyThi}
+  data.update({'name': request.user.tenCanBo})
   return render(request, 'danhsachphong.html', data)
-
-# Hien thi sinh vien trong phong thi voi id
-def danhSachSinhVien(request, a):
-  data = {}
-
-  thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
-  thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
-  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
-  tenmon = models.PhongThi.objects.get(id = a).maLop.maMon.tenMon
-
-  data.update({'thoigian': thoiGian})
-  data.update({'thoigianthi': thoiGianThi})
-  data.update({'ngaythi': ngayThi})
-  data.update({'id': a})
-  data.update({'tenmon': tenmon})
-
-  return render(request, 'coithi/danhsachsinhvien.html', data)
 
 # Data danh sach sinh vien
 def dataSV(request, idPhong):
@@ -201,6 +186,7 @@ def DanhSachSV(request, idPhong):
   data.update({'ngaythi': ngayThi})
   data.update({'tenmon': tenmon})
   data.update({'idPhong': idPhong})
+  data.update({'name': request.user.tenCanBo})
   return render(request, 'danhsachsinhvien.html', data)
 
 # Cap nhat thong tin coi thi
@@ -238,6 +224,33 @@ def updateCoiThi(request):
     lop.save()
   return render(request, 'danhsachsinhvien.html', data)
 
+# Trang sua thong tin
+def SuaThongTin(request, id):
+  data = {'id': id}
+  data.update({'name': request.user.tenCanBo})
+  data.update({'tencanbo': request.user.tenCanBo})
+  return render(request, 'suathongtin.html', data)
+
+# Ham sua thong tin
+def updateinfo(request):
+  matkhaumoi = request.POST['matkhaumoi']
+  mknhaplai = request.POST['nhaplaimatkhau']
+  print(matkhaumoi)
+  username = request.user.username
+  idcanbo = request.POST['idcanbo']
+  if request.POST['nhaplaimatkhau'] != 'notnull':
+    request.user.set_password(matkhaumoi)
+    request.user.tenCanBo = request.POST['ten']
+
+    request.user.save()
+
+  request.user.tenCanBo = request.POST['ten']
+
+  request.user.save()
+  CanBo = authenticate(username = username, password = matkhaumoi)
+  login(request, CanBo)
+  return HttpResponse('done')
+
 # Logout
 def user_logout(request):
   logout(request)
@@ -246,13 +259,12 @@ def user_logout(request):
 
 def ChamTay(request, a):
   data = {'id': a}
+  data.update({'name': request.user.tenCanBo})
   return render(request, 'nhapdiembangtay.html', data)
 
 def ChamDiem(request):
   idLop = request.POST['idlop']
   idSV = request.POST['idsv']
-  print(idLop)
-  print(idSV)
   SV = models.ChiTietLop.objects.filter(maLop = idLop).filter(maSinhVien = idSV).first()
   SV.diem = request.POST.get('diem')
   SV.save()

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
-{% block title %}Coi thi{% endblock title %}
+{% block title %}Chấm thi{% endblock title %}
 {% block pagecontent %}
 {% block name %}
 {{ name }}
@@ -125,10 +125,11 @@
               csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
             success: function() {
+              
             }
           })
         } else {
-          
+
         }
       })
     })

@@ -16,5 +16,7 @@ urlpatterns = [
   path('danh-sach-phong/phong/<int:idPhong>', views.DanhSachSV),
   path('capnhat-trangthai/', views.updateCoiThi),
   path('cham-tay/<int:a>', views.ChamTay, name='nhapdiembangtay'),
-  path('cham-tay/post-diem/', views.ChamDiem)
+  path('cham-tay/post-diem/', views.ChamDiem),
+  path('info/<int:id>', views.SuaThongTin, name='suathongtin'),
+  path('info/post-info/', views.updateinfo)
 ]
