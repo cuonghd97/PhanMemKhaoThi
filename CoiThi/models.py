@@ -49,7 +49,7 @@ class CanBo(AbstractUser):
 class SinhVien(models.Model):
   maSinhVien = models.CharField(max_length=100, null=True)
   tenSinhVien = models.TextField(max_length=200, null=True)
-  tuoi = models.IntegerField(default=0)
+  ngaySinh = models.DateField(datetime.date.today())
   maDonVi = models.ForeignKey(DonVi, models.SET_NULL, null=True)
 
   class Meta:
