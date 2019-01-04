@@ -1,5 +1,5 @@
 $(document).ready(function() {
-      $('#quanlykithi').DataTable( {
+    $('#quanlykithi').DataTable( {
         "ajax": {
             "type": "GET",
             "url": "/adminkt/quan_ly_ki_thi_data",
@@ -51,6 +51,20 @@ $(document).ready(function() {
            });
         }
     });
+    function getdate(){
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; 
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+        dd = '0' + dd;
+        } 
+        if (mm < 10) {
+        mm = '0' + mm;
+        } 
+        var today = yyyy + '-' + mm + '-' + dd;
+        return today
+    }
     $("#new_kithi").on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
         var title = button.data('title');
@@ -63,16 +77,23 @@ $(document).ready(function() {
 
             var tungay = $("#tungay_"+id).data("tungay");
             $("#new_kithi input[name=tungay]").val(tungay);
+            $("#new_kithi input[name=tungay]").attr('min',getdate());
+
             var denngay = $("#denngay_"+id).data("denngay")
             $("#new_kithi input[name=denngay]").val(denngay);
+            $("#new_kithi input[name=denngay]").attr('min',getdate());
+
             $('#change_kithi_title').html("Chỉnh sửa kì thi")
             $("#save_new_kithi").html("Chỉnh sửa");
         }else{
+            
             $("#new_kithi input[name=id]").val(0);
             $('#change_kithi_title').html("Tạo mới kì thi")
             $("#new_kithi input[name=ten]").val("");
             $("#new_kithi input[name=tungay]").val("");
+            $("#new_kithi input[name=tungay]").attr('min',getdate());
             $("#new_kithi input[name=denngay]").val("");
+            $("#new_kithi input[name=denngay]").attr('min',getdate());
             $("#save_new_kithi").html("Tạo mới");
         }
     });
@@ -97,6 +118,18 @@ $(document).ready(function() {
                 {
                     alert('Tạo mới thành công');
                 }
+            }
+        });
+    });
+    $('#add_room input[name=tenkithi]').change(function(){
+        $("#lskithi option").each(function(){
+            if($("#add_room input[name=tenkithi]").val() == $(this).val()){
+                kithi = $(this).data("kt");
+                // var tungay = $('#tungay_'+kithi).data('tungay');
+                // var denngay = $('#denngay_'+kithi).data('denngay');
+                // alert(kithi);
+                $("#add_room input[name=ngaythi]").attr('min',$('#tungay_'+kithi).data('tungay'));
+                $("#add_room input[name=ngaythi]").attr('max',$('#denngay_'+kithi).data('denngay'));
             }
         });
     });

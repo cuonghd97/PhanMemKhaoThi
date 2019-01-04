@@ -57,11 +57,7 @@
                           </a>
                       </li>
                       <li>
-                        <a href="{% url 'adminkt:manage_lop' %}"><i class="fa fa-home"></i> Quản lý lớp
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:manage_hocvien' %}"><i class="fa fa-users"></i> Quản lý học viên
+                        <a href="{% url 'adminkt:manage_donvi' %}"><i class="fa fa-user-plus"></i> Quản lý đơn vị
                         </a>
                       </li>
                       <li>
@@ -69,11 +65,15 @@
                         </a>
                       </li>
                       <li>
-                          <a href="{% url 'adminkt:quanly_canbo' %}"><i class="fa fa-home"></i> Quản lý cán bộ
-                          </a>
+                        <a href="{% url 'adminkt:manage_hocvien' %}"><i class="fa fa-users"></i> Quản lý học viên
+                        </a>
                       </li>
                       <li>
-                        <a href="{% url 'adminkt:manage_donvi' %}"><i class="fa fa-user-plus"></i> Quản lý đơn vị
+                        <a href="{% url 'adminkt:quanly_canbo' %}"><i class="fa fa-home"></i> Quản lý cán bộ
+                        </a>
+                    </li>
+                      <li>
+                        <a href="{% url 'adminkt:manage_lop' %}"><i class="fa fa-home"></i> Quản lý lớp
                         </a>
                       </li>
                       <li>
@@ -86,21 +86,10 @@
                           <ul class="nav child_menu">
                             <li><a href="{% url 'adminkt:thongke' %}">Thống kê chấm thi</a></li>
                             <li><a href="{% url 'adminkt:thongkecoi' %}">Thống kê coi thi</a></li>
-                            <li><a href="{% url 'adminkt:thongke_kithi' %}">Thống kê thông tin kì thi</a></li>
-                          </ul>
-                        </a>
-                      </li>
-                      <li>
-                        <a><i class="fa fa-clone"></i> Xuất phiếu thống kê
-                          <span class="fa fa-chevron-down"></span></a>
-                          <ul class="nav child_menu">
-                            <li><a href="#">Thống kê chấm thi kết thúc</a></li>
-                            <li><a href="#">Thống kê số liệu chấm thi</a></li>
-                            <li><a href="#">Thanh toán coi thi </a></li>
-                            <li><a href="#">Thống kê cán bộ coi thi </a></li>
-                            <li><a href="#">Thống kế học viên vi phạm </a></li>
-                            <li><a href="#">Thống kê học viên trượt </a></li>
-                            <li><a href="#">Thống kê học viên chưa thi KTHP </a></li>
+                            <li><a href="{% url 'adminkt:thongke_kithi_truot' %}">Thống kê trượt trong kì thi</a></li>
+                            <li><a href="{% url 'adminkt:thongke_kithi_vipham' %}">Thống kê vi phạm trong kì thi</a></li>
+                            <li><a href="{% url 'adminkt:thongke_kithi_hoanthi' %}">Thống kê hoãn thi trong kì thi</a></li>
+                            <li><a href="{% url 'adminkt:thongkethanhtoancoi' %}">Thống kê thanh toán coi thi</a></li>
                           </ul>
                         </a>
                       </li>
