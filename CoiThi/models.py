@@ -44,7 +44,7 @@ class CanBo(AbstractUser):
   class Meta:
     managed = True
     db_table = 'can_bo'
-
+    
 # Bảng Sinh Viên
 class SinhVien(models.Model):
   maSinhVien = models.CharField(max_length=100, null=True)
