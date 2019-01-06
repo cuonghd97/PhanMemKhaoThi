@@ -118,15 +118,15 @@ Trang quản lý
           "data": function (result) {
             return JSON.stringify(result);
           },
-          "complete" : function(dulieu){
+          "complete" : function(){
             element = `<tr>
                     <td>#</td>
                     <td colspan="3">Tổng</td>
-                    <td>3</td>
+                    <td>${dulieu.sobuoi}</td>
                     <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>${dulieu.tongtien}</td>
+                    <td>${dulieu.tongthue}</td>
+                    <td>${dulieu.tonglinh}</td>
                     <td></td>
                   </tr>`
           $('#example').append(element)
@@ -167,7 +167,7 @@ Trang quản lý
       });
     });
     var today = new Date();
-      $('#day').html(today.getDay());
+      $('#day').html(today.getDate());
       $('#month').html(today.getMonth() + 1);
       $('#year').html(today.getFullYear());
   });
