@@ -156,7 +156,10 @@ def dataSV(request, idPhong):
     i = i + 1
 
     data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
-    data.update({'tuoi': item.maSinhVien.tuoi})
+    ngayHienTai = datetime.datetime.now().date()
+    ngaySinh = item.maSinhVien.ngaySinh
+    tuoi = ngayHienTai - ngaySinh
+    data.update({'tuoi': int(tuoi.days / 365.25)})
     data.update({'tendonvi': item.maSinhVien.maDonVi.tenDonVi})
     data.update({'masinhvien': item.maSinhVien.maSinhVien})
     data.update({'idsv': item.maSinhVien.id})

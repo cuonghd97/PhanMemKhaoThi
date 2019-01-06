@@ -86,7 +86,7 @@ Trang quản lý
                       <th >Ký nhận</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="thanbang">
                   </tbody>
                 </table>
               </div>
@@ -110,7 +110,7 @@ Trang quản lý
 <script type="text/javascript">
   $(document).ready(function () {
     function get_data(kithi) {
-      $('#example').DataTable({
+      var table = $('#example').DataTable({
         "ajax": {
           "type": "GET",
           "url": '/adminkt/thong_ke_thanh_toan_coi_thi/' + kithi,
@@ -123,6 +123,7 @@ Trang quản lý
         "destroy": true,
       });
     }
+
     $('input[name=tenkithi]').on('change', function () {
       // $('#example').DataTable().clear().draw();
       var token = $("input[name=csrfmiddlewaretoken]").val();
@@ -150,7 +151,7 @@ Trang quản lý
           // $('#loading-image').hide();
           $('#download').attr("href", "/adminkt/download/" + data.download);
           $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP')
-        },
+        }
       });
     });
     var today = new Date();

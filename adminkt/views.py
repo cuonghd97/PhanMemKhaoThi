@@ -752,7 +752,7 @@ def thongke_thanhtoan_coi(request,kithi):
             kinhan = ''
             row_cells[9].text = ' '
             data.append([str(a),hoten, donvi, capham, sobuoi,giabieu,thanhtien,thue,conlinh,kinhan])
-        
+
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)
         table2.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -1418,4 +1418,3 @@ def thongke_kithi_hoanthi(request,kithi):
         return JsonResponse(json_data)
     else:
         return HttpResponseRedirect('/')
-
