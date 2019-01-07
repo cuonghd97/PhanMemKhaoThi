@@ -110,14 +110,7 @@ $(document).ready(function() {
             data: {'csrfmiddlewaretoken':token, 'kieu':kieu, 'tenkithi': ten, 'id':id, 'tungay':tungay,'denngay':denngay},
             success: function(){    
                 $("#new_kithi").modal("hide");
-                $('#quanlykithi').DataTable().ajax.reload(null,false);
-                if(kieu == 'edit'){
-                    alert('Chỉnh sửa thành công');
-                }
-                else
-                {
-                    alert('Tạo mới thành công');
-                }
+                location.reload();
             }
         });
     });

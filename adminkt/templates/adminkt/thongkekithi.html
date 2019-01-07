@@ -183,7 +183,7 @@ Trang quản lý
           'kithi': kithi
         },
         success: function (data) {
-          // get_data(kithi);
+          get_data(kithi);
           $('#loading-image').hide();
           $('#download').attr("href", "/adminkt/download/" + data.download);
           $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP')

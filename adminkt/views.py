@@ -7,6 +7,7 @@ from django.conf import settings
 import json
 import os
 from wsgiref.util import FileWrapper
+import datetime
 from docx import Document
 from docx.shared import Inches,Pt,Mm
 from docx.enum.table import WD_TABLE_ALIGNMENT
@@ -93,11 +94,15 @@ def manage_student_data(request,lop):
         ls_chi_tiet = ChiTietLop.objects.filter(maLop = LopHoc.objects.get(tenLop=lop)).values('maLop')
         ls_student = ChiTietLop.objects.filter(maLop__in = ls_chi_tiet)
         data = []
+        now = datetime.datetime.now()
+        yearnow = now.year 
         for student in ls_student:
             fullname = '<p id="full_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.tenSinhVien)
             username = '<p id="user_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.maSinhVien)
-            tuoi = '<p id="tuoi_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.tuoi)
+            tuoisv = yearnow - student.maSinhVien.ngaySinh.year
+            tuoi = '<p id="tuoi_{}">{}</p>'.format(student.maSinhVien.id,tuoisv)
             capham = '<p id="capham_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.maDonVi.tenDonVi)
+            diem = '<p id="diem_{0}">{1}</p>'.format(student.maSinhVien.id, student.diem)
             option = '''
                 <div class="btn-group">
                     <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
@@ -105,7 +110,7 @@ def manage_student_data(request,lop):
                     </button>
                 </div>
             '''.format(student.id)
-            data.append([fullname, username, tuoi,capham,option])
+            data.append([fullname, username,tuoi,capham,diem,option])
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
@@ -299,10 +304,13 @@ def manage_hocvien_data(request):
     if user.is_authenticated and user.position == 0:
         ls_student = SinhVien.objects.all()
         data = []
+        now = datetime.datetime.now()
+        yearnow = now.year
         for sv in ls_student:
             fullname = '<p id="full_{0}">{1}</p>'.format(sv.id, sv.tenSinhVien)
             masv = '<p id="ma_{}">{}</p>'.format(sv.id,sv.maSinhVien)
-            tuoi = '<p id="tuoi_{}">{}</p>'.format(sv.id,sv.tuoi)
+            tuoisv = yearnow - sv.ngaySinh.year
+            tuoi = '<p id="tuoi_{}">{}</p>'.format(sv.id,tuoisv)
             donvi = '<p id="donvi_{0}">{1}</p>'.format(sv.id,sv.maDonVi.tenDonVi)
             options = '''
                 <div class="btn-group">
@@ -474,6 +482,7 @@ def thongke_kithi(request,kithi):
         ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
         data = []
         a = 0
+        now = datetime.datetime.now()
         document = Document()
         style = document.styles['Normal']
         font = style.font
@@ -506,13 +515,13 @@ def thongke_kithi(request,kithi):
         run3 = paragraph1.add_run('Độc lập – Tự do – Hạnh phúc')
         run3.bold = True
         run3.underline = True
-        text = 'Hà nội, ngày 30 tháng 10 năm 2018'
+        text = 'Hà nội, ngày '+ str(now.day) +' tháng ' + str(now.month) + ' năm ' + str(now.year)
 
         paragraph3 =  document.add_paragraph()
         paragraph3.add_run(text).italic = True
         paragraph3.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-        Tieude = 'THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN(LẦN 1)'
+        Tieude = 'THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN'
 
         paragraph3 = document.add_paragraph()
         paragraph3.add_run(Tieude).bold = True
@@ -622,9 +631,9 @@ def thongke_thanhtoan_coi(request,kithi):
     if user.is_authenticated and user.position == 0:
         ls_kt = KyThi.objects.get(id = kithi)
         ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
-
         data = []
         a = 0
+        now = datetime.datetime.now()
         document = Document()
         style = document.styles['Normal']
         font = style.font
@@ -657,13 +666,13 @@ def thongke_thanhtoan_coi(request,kithi):
         run3 = paragraph1.add_run('Độc lập – Tự do – Hạnh phúc')
         run3.bold = True
         run3.underline = True
-        text = 'Hà nội, ngày 30 tháng 10 năm 2018'
+        text = 'Hà nội, ngày '+ str(now.day) +' tháng ' + str(now.month) + ' năm ' + str(now.year)
 
         paragraph3 =  document.add_paragraph()
         paragraph3.add_run(text).italic = True
         paragraph3.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-        Tieude = 'THỐNG KÊ CHẤM THI KẾT THÚC HỌC PHẦN(LẦN 1)'
+        Tieude = 'THỐNG KÊ THANH TOÁN COI THI'
 
         paragraph3 = document.add_paragraph()
         paragraph3.add_run(Tieude).bold = True
@@ -676,54 +685,18 @@ def thongke_thanhtoan_coi(request,kithi):
         paragraph3.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
         body_text_style = document.styles['Table Grid']
-        table = document.add_table(rows=2, cols=10,style = body_text_style)
+        table = document.add_table(rows=1, cols=10,style = body_text_style)
         hdr_cells1 = table.rows[0].cells
-        hdr_cells2 = table.rows[1].cells
-
         hdr_cells1[0].text = 'TT'
-        cel_meger0 = hdr_cells1[0].merge(hdr_cells2[0])
-        cel_meger0 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[1].text = 'Lớp'
-        cel_meger1 = hdr_cells1[1].merge(hdr_cells2[1])
-        cel_meger1 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[2].text = 'Quân số'
-        cel_meger2 = hdr_cells1[2].merge(hdr_cells2[2])
-        cel_meger2 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[3].text = 'Ngày thi'
-        cel_meger3 = hdr_cells1[3].merge(hdr_cells2[3])
-        cel_meger3 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[4].text = 'Môn thi'
-        cel_meger4 = hdr_cells1[4].merge(hdr_cells2[4])
-        cel_meger4 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[5].text = 'Hình thức thi'
-        cel_meger5 = hdr_cells1[5].merge(hdr_cells2[5])
-        cel_meger5 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells1[6].text = 'Cán bộ chấm thi'
-        cel_meger6 = hdr_cells1[6].merge(hdr_cells1[7].merge(hdr_cells1[8]))
-        cel_meger6 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
-        hdr_cells2[6].text = 'Họ và tên'
-        hdr_cells2[7].text = 'Đơn vị'
-        hdr_cells2[8].text = 'Cấp hàm'
-
-        hdr_cells1[9].text = 'Ghi chú'
-        cel_meger7 = hdr_cells1[9].merge(hdr_cells2[9])
-        cel_meger7 = '\n'.join(
-            cell.text for cell in hdr_cells1 if cell.text
-        )
+        hdr_cells1[1].text = 'Họ và tên'
+        hdr_cells1[2].text = 'Đơn vị'
+        hdr_cells1[3].text = 'Cấp hàm'
+        hdr_cells1[4].text = 'Số buổi'
+        hdr_cells1[5].text = 'Giá biểu'
+        hdr_cells1[6].text = 'Thành tiền'
+        hdr_cells1[7].text = 'Trừ thuế'
+        hdr_cells1[8].text = 'Còn lĩnh'
+        hdr_cells1[9].text = 'Kí tên'
         lis =[]
         tongsobuoi = 0
         for pt in ls_pt:
@@ -748,14 +721,23 @@ def thongke_thanhtoan_coi(request,kithi):
             thanhtien = '<p id="thanhtien_{0}">{1}</p>'.format(x,lis.count(x)*60000)
             row_cells[6].text = str(lis.count(x)*60000)
             thue = '<p id="thue_{0}">{1}</p>'.format(x,int((lis.count(x)*60000)*10/100))
-            row_cells[7].text = str((lis.count(x)*60000)*0.1)
+            row_cells[7].text = str(int((lis.count(x)*60000)*10/100))
             conlinh = '<p id="conlinh_{0}">{1}</p>'.format(x,int((lis.count(x)*60000)*90/100))
-            row_cells[8].text =str((lis.count(x)*60000)*0.9)
+            row_cells[8].text =str(int((lis.count(x)*60000)*90/100))
             kinhan = ''
             row_cells[9].text = ' '
             data.append([str(a),hoten, donvi, capham, sobuoi,giabieu,thanhtien,thue,conlinh,kinhan])
         row_cells = table.add_row().cells
-        
+        row_cells[0].text = '#'
+        row_cells[1].text = 'Tổng'
+        cel_meger8 = row_cells[1].merge(row_cells[2].merge(row_cells[3]))
+        cel_meger8 = '\n'.join(
+            cell.text for cell in row_cells if cell.text
+        )
+        row_cells[4].text = str(tongsobuoi)
+        row_cells[6].text = str(int(tongsobuoi*60000))
+        row_cells[7].text = str(int(tongsobuoi*60000*0.1))
+        row_cells[8].text = str(int(tongsobuoi*60000*0.9))
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)
         table2.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -1048,8 +1030,7 @@ def thongke_kithi_truot(request,kithi):
     user = request.user
     if user.is_authenticated and user.position == 0:
         ls_kt = KyThi.objects.get(id = kithi)
-        ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
-        ls_sv = ChiTietLop.objects.all().filter(trangThai= '')
+        ls_pt = PhongThi.objects.filter(maKyThi = ls_kt) 
         data = []
         a = 0
         document = Document()
@@ -1129,25 +1110,27 @@ def thongke_kithi_truot(request,kithi):
             cell.text for cell in hdr_cells1 if cell.text
         )
         b = 0
-        for pt in ls_sv:
-            row_cells = table.add_row().cells
-            a = a + 1
-            row_cells[0].text = a
-            lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
-            row_cells[1].text = pt.maLop.tenLop
-            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
-            row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
-            mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
-            row_cells[3].text = pt.maLop.maMon.tenMon
-            hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
-            row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
-            tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
-            row_cells[5].text = pt.maSinhVien.tenSinhVien
-            diemthi = '<p id="diem_{0}"></p>'.format(pt.id)
-            # cells[6].text = pt.diem
-            ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
-            row_cells[7].text = ''
-            data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,diemthi,ghichu])
+        for phongthi in ls_pt:
+            ls_sv = ChiTietLop.objects.filter(diem__lt = 5,maLop = phongthi.maLop.id)
+            for pt in ls_sv:
+                row_cells = table.add_row().cells
+                a = a + 1
+                row_cells[0].text = str(a)
+                lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
+                row_cells[1].text = pt.maLop.tenLop
+                ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop.id).ngayThi.strftime('%d-%m-%Y'))
+                row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop.id).ngayThi.strftime('%d-%m-%Y')
+                mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
+                row_cells[3].text = pt.maLop.maMon.tenMon
+                hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop.id).hinhThucThi)
+                row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop.id).hinhThucThi
+                tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
+                row_cells[5].text = pt.maSinhVien.tenSinhVien
+                diemthi = '<p id="diem_{0}">{1}</p>'.format(pt.id,pt.diem)
+                # cells[6].text = pt.diem
+                ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
+                row_cells[7].text = ''
+                data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,diemthi,ghichu])
 
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)
@@ -1175,7 +1158,7 @@ def thongke_kithi_vipham(request,kithi):
     if user.is_authenticated and user.position == 0:
         ls_kt = KyThi.objects.get(id = kithi)
         ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
-        ls_sv = ChiTietLop.objects.all().filter(trangThai= 'Vi phạm')
+        # ls_sv = ChiTietLop.objects.all().filter(trangThai= 'Vi phạm')
         data = []
         a = 0
         document = Document()
@@ -1255,25 +1238,27 @@ def thongke_kithi_vipham(request,kithi):
             cell.text for cell in hdr_cells1 if cell.text
         )
         b = 0
-        for pt in ls_sv:
-            row_cells = table.add_row().cells
-            a = a + 1
-            row_cells[0].text = str(a)
-            lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
-            row_cells[1].text = pt.maLop.tenLop
-            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
-            row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
-            mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
-            row_cells[3].text = pt.maLop.maMon.tenMon
-            hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
-            row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
-            tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
-            row_cells[5].text = pt.maSinhVien.tenSinhVien
-            lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
-            row_cells[6].text = pt.lyDo
-            ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
-            row_cells[7].text = ''
-            data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,lydo,ghichu])
+        for phongthi in ls_pt:
+            ls_sv = ChiTietLop.objects.filter(trangThai= 'Vi phạm',maLop = phongthi.maLop.id)
+            for pt in ls_sv:
+                row_cells = table.add_row().cells
+                a = a + 1
+                row_cells[0].text = str(a)
+                lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
+                row_cells[1].text = pt.maLop.tenLop
+                ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
+                row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
+                mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
+                row_cells[3].text = pt.maLop.maMon.tenMon
+                hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
+                row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
+                tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
+                row_cells[5].text = pt.maSinhVien.tenSinhVien
+                lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
+                row_cells[6].text = pt.lyDo
+                ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
+                row_cells[7].text = pt.ghiChu
+                data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,lydo,ghichu])
 
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)
@@ -1301,7 +1286,6 @@ def thongke_kithi_hoanthi(request,kithi):
     if user.is_authenticated and user.position == 0:
         ls_kt = KyThi.objects.get(id = kithi)
         ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
-        ls_sv = ChiTietLop.objects.all().filter(trangThai= 'Hoãn thi')
         data = []
         a = 0
         document = Document()
@@ -1381,25 +1365,27 @@ def thongke_kithi_hoanthi(request,kithi):
             cell.text for cell in hdr_cells1 if cell.text
         )
         b = 0
-        for pt in ls_sv:
-            row_cells = table.add_row().cells
-            a = a + 1
-            row_cells[0].text = str(a)
-            lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
-            row_cells[1].text = pt.maLop.tenLop
-            ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
-            row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
-            mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
-            row_cells[3].text = pt.maLop.maMon.tenMon
-            hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
-            row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
-            tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
-            row_cells[5].text = pt.maSinhVien.tenSinhVien
-            lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
-            # cells[6].text = pt.diem
-            ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
-            row_cells[7].text = ''
-            data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,lydo,ghichu])
+        for phongthi in ls_pt:
+            ls_sv = ChiTietLop.objects.filter(trangThai= 'Hoãn thi',maLop = phongthi.maLop.id)
+            for pt in ls_sv:
+                row_cells = table.add_row().cells
+                a = a + 1
+                row_cells[0].text = str(a)
+                lop = '<p id="lop_{0}">{1}</p>'.format(pt.id, pt.maLop.tenLop)
+                row_cells[1].text = pt.maLop.tenLop
+                ngaythi = '<p id="ngaythi_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y'))
+                row_cells[2].text = PhongThi.objects.get(maLop = pt.maLop).ngayThi.strftime('%d-%m-%Y')
+                mon = '<p id="mon_{0}">{1}</p>'.format(pt.id, pt.maLop.maMon.tenMon)
+                row_cells[3].text = pt.maLop.maMon.tenMon
+                hinhthuc = '<p id="hinhthuc_{0}">{1}</p>'.format(pt.id,PhongThi.objects.get(maLop = pt.maLop).hinhThucThi)
+                row_cells[4].text = PhongThi.objects.get(maLop = pt.maLop).hinhThucThi
+                tensv = '<p id="tensv_{0}">{1}</p>'.format(pt.id,pt.maSinhVien.tenSinhVien)
+                row_cells[5].text = pt.maSinhVien.tenSinhVien
+                lydo = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.lyDo)
+                row_cells[6].text = pt.lyDo
+                ghichu = '<p id="lydo_{0}">{1}</p>'.format(pt.id,pt.ghiChu)
+                row_cells[7].text = pt.ghiChu
+                data.append([str(a),lop, ngaythi, mon, hinhthuc,tensv,lydo,ghichu])
 
         document.add_paragraph().add_run().add_break()
         table2 = document.add_table(rows=1, cols=2)

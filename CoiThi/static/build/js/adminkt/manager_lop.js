@@ -123,8 +123,7 @@ $(document).ready(function(){
             data: {'csrfmiddlewaretoken':token, 'kieu':kieu, 'ten': ten, 'id':id , 'khoa':khoa, 'mon':mon},
             success: function(){
                 $("#new_class").modal("hide");
-                alert('tao thành công');
-                table_class.ajax.reload(null,false);
+                location.reload();
                 
             }
         });
