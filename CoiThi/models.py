@@ -44,7 +44,7 @@ class CanBo(AbstractUser):
   class Meta:
     managed = True
     db_table = 'can_bo'
-    
+
 # Bảng Sinh Viên
 class SinhVien(models.Model):
   maSinhVien = models.CharField(max_length=100, null=True)
@@ -75,6 +75,7 @@ class ChiTietLop(models.Model):
   trangThai = models.TextField(max_length=200, null=True)
   lyDo = models.TextField(max_length=200, null=True)
   ghiChu = models.TextField(max_length=200, null=True)
+  soBaoDanh = models.CharField(max_length=100, null=True)
 
   class Meta:
     managed = True
@@ -127,3 +128,21 @@ class ChamThi(models.Model):
   class Meta:
     managed = True
     db_table = 'cham_thi'
+
+# Bang dap an
+class DapAn(models.Model):
+  maDe = models.CharField(max_length=100, null=True)
+  dapAn = models.FileField(upload_to='DapAn')
+
+  class Meta:
+    managed = True
+    db_table = 'dap_an'
+
+# Bang bai thi
+class BaiThi(models.Model):
+  maDe = models.CharField(max_length=100, null=True)
+  baiLam = models.FileField(upload_to='BaiLam')
+
+  class Meta:
+    managed = True
+    db_table = 'bai_thi'

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}Chấm thi{% endblock title %}
+{% block pagecontent %}
+{% block name %}
+{{ name }}
+{% endblock name %}
+
+<!-- CSS -->
+<link rel="stylesheet" href="{% static 'build/css/chamtay.css' %}">
+
+<!-- page content -->
+<div class="right_col" role="main">
+  <div class="">
+    <div class="page-title">
+      <div class="title_left">
+        <h3>Danh sách sinh viên</h3>
+      </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Số đáp án đúng: <span id="correct"></span></h2>
+            <!-- <h2>Button Example <small>Users</small></h2> -->
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <br />
+            <div class="col-md-6">
+              <center>Bài làm</center>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Câu</th>
+                    <th>Đáp án</th>
+                  </tr>
+                </thead>
+                <tbody id="bailam">
+
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <center>Đáp án</center>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Câu</th>
+                    <th>Đáp án</th>
+                  </tr>
+                </thead>
+                <tbody id="dapan">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /page content -->
+{% endblock pagecontent %}
+{% block js %}
+<!-- jQuery Smart Wizard -->
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      type: 'get',
+      url: '/data-ketqua/',
+      success: function (data) {
+        var bailam = data[0]
+        var dapan = data[1]
+        var diem = data[2].diem
+        $('#correct').text(diem)
+        element = ``
+        $.each(bailam, function (key, value) {
+          var ans
+          if (value == 1) {
+            ans = 'A'
+          } else if (value == 2) {
+            ans = 'B'
+          } else if (value == 3) {
+            ans = 'C'
+          } else {
+            ans = 'D'
+          }
+
+          element +=
+            `<tr>
+            <td>${key}</td>
+            <td>${ans}</td>
+          </tr>
+          `
+        })
+        $('#bailam').html(element)
+
+        element = ``
+        $.each(dapan, function (key, value) {
+          var ans
+          if (value == 1) {
+            ans = 'A'
+          } else if (value == 2) {
+            ans = 'B'
+          } else if (value == 3) {
+            ans = 'C'
+          } else {
+            ans = 'D'
+          }
+
+          element +=
+            `<tr>
+            <td>${key}</td>
+            <td>${ans}</td>
+          </tr>
+          `
+        })
+        $('#dapan').html(element)
+      }
+    })
+  })
+</script>
+{% endblock js %}
