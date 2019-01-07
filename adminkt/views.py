@@ -350,10 +350,12 @@ def manager_canbo(request):
                         gv = CanBo.objects.create(email=request.POST['email'],
                                             tenCanBo=request.POST['fullname'],
                                             username=request.POST['username'],
-                                            password=request.POST['password'],
                                             quanHam =request.POST['quanham'],
+                                            position = 1,
                                             maDonVi = DonVi.objects.get(id = request.POST['donvi']),
                                             maCanBo=request.POST['macanbo'])
+                        gv.set_password(request.POST['password'])
+                        gv.save()
                     except:
                         pass
                 else:
@@ -364,7 +366,6 @@ def manager_canbo(request):
                         gv.email = request.POST['email']
                         gv.maCanBo = request.POST['macanbo']
                         gv.maDonVi = DonVi.objects.get(id = request.POST['donvi'])
-
                         gv.save()
                     except:
                         pass
@@ -375,13 +376,15 @@ def manager_canbo(request):
                     if len(tea) == 0:
                         continue
                     try:
-                        CanBo.objects.create(email=tea[2],
+                        gv = CanBo.objects.create(email=tea[2],
                                             tenCanBo=tea[0],
                                             maCanBo=tea[5],
                                             quanHam=tea[4],
                                             username=tea[1],
-                                            password=tea[3],
+                                            position = 1,
                                             maDonVi= DonVi.objects.get(id =tea[6]))
+                        gv.set_password(tea[3])
+                        gv.save()
                     except:
                         continue
 
