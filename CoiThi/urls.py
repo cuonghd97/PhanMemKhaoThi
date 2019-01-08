@@ -17,6 +17,9 @@ urlpatterns = [
   path('capnhat-trangthai/', views.updateCoiThi),
   path('cham-tay/<int:a>', views.ChamTay, name='nhapdiembangtay'),
   path('cham-tay/post-diem/', views.ChamDiem),
+  path('cham-tu-dong/<int:a>', views.ChamTuDong, name='chamtudong'),
   path('info/<int:id>', views.SuaThongTin, name='suathongtin'),
-  path('info/post-info/', views.updateinfo)
+  path('info/post-info/', views.updateinfo),
+  path('upload-baithi/', views.uploadBaiThi),
+  path('data-ketqua/', views.xemdien)
 ]

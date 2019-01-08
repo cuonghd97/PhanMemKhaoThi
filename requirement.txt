@@ -6,3 +6,4 @@ opencv-python
 scipy
 opticalmarkmedi
 python-docx
+xlrd

@@ -9,6 +9,9 @@ import json
 from django.core.serializers import serialize
 from . import models
 import datetime
+import opticalmarkmedi
+# sudo pip install xlrd
+import xlrd
 # Create your views here.
 
 # Redirect login
@@ -238,7 +241,6 @@ def SuaThongTin(request, id):
 def updateinfo(request):
   matkhaumoi = request.POST['matkhaumoi']
   mknhaplai = request.POST['nhaplaimatkhau']
-  print(matkhaumoi)
   username = request.user.username
   idcanbo = request.POST['idcanbo']
   if request.POST['nhaplaimatkhau'] != 'notnull':
@@ -259,12 +261,12 @@ def user_logout(request):
   logout(request)
   return redirect('CoiThi:login')
 
-
+# Nhap diem bang tay
 def ChamTay(request, a):
   data = {'id': a}
   data.update({'name': request.user.tenCanBo})
   return render(request, 'nhapdiembangtay.html', data)
-
+# Phuong thuc cham diem
 def ChamDiem(request):
   idLop = request.POST['idlop']
   idSV = request.POST['idsv']
@@ -275,4 +277,60 @@ def ChamDiem(request):
 
 def ChamTuDong(request, a):
   data = {'id': a}
-  return render(request, 'chamthi/chamtudong.html', data)
+  data.update({'name': request.user.tenCanBo})
+  return render(request, 'chamtudong.html', data)
+
+# Upload file de cham thi
+def uploadBaiThi(request):
+  if request.method == "POST":
+    listDapAn = request.FILES.getlist('danhsachdapan')
+    listBaiThi = request.FILES.getlist('danhsachbaithi')
+  dapAn = models.DapAn()
+  dapAn.dapAn = listDapAn[0]
+  dapAn.maDe = 'de'
+  # dapAn.save()
+
+  baiThi = models.BaiThi()
+  baiThi.baiLam = listBaiThi[0]
+  # baiThi.save()
+  return render(request, 'diem.html')
+
+# Diem
+def xemdien(request):
+  datajson = []
+
+  bl = models.BaiThi.objects.get(id=1)
+  fileimg = bl.baiLam.path
+
+  dataBl = opticalmarkmedi.auto_mark(fileimg)
+  d = json.loads(dataBl)
+  datajson.append(d)
+
+  source = models.DapAn.objects.get(id=1)
+  excelfilename = source.dapAn.path
+  workbook = xlrd.open_workbook(excelfilename)
+  worksheet = workbook.sheet_by_index(0)
+  num_rows = worksheet.nrows
+  num_cols = worksheet.ncols
+  data = {}
+  for r in range(num_rows):
+    key = str(worksheet.cell_value(r, 0)).replace('.0', '')
+    value = worksheet.cell_value(r, 1)
+    if value == 'A':
+      ans = 1
+    elif value == 'B':
+      ans = 2
+    elif value == 'C':
+      ans = 3
+    else:
+      ans = 4
+    data.update({key: ans})
+
+  dem = 0
+  for item in data:
+    if int(d[item]) == int(data[item]):
+      dem += 1
+  diem = {'diem': dem}
+  datajson.append(data)
+  datajson.append(diem)
+  return JsonResponse(datajson, safe=False)
