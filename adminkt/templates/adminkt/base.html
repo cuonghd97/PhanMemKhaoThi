@@ -32,7 +32,7 @@
             <div class="col-md-3 left_col">
               <div class="left_col scroll-view">
                 <div class="navbar nav_title" style="border: 0;">
-                  <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>ADMIN!</span></a>
+                  <a href="javascrip:void()" class="site_title"><i class="fa fa-paw"></i> <span>ADMIN!</span></a>
                 </div>
                 <div class="clearfix"></div>
                 <!-- menu profile quick info -->
@@ -115,7 +115,7 @@
                         <span class=" fa fa-angle-down"></span>
                       </a>
                       <ul class="dropdown-menu dropdown-usermenu pull-right">
-                        <li><a href="javascript:;"> Profile</a></li>
+                        <li><a href="{% url 'adminkt:profile' %}"> Profile</a></li>
                         <li><a href="{% url 'CoiThi:logout' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                       </ul>
                     </li>

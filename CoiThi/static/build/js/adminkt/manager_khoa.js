@@ -34,8 +34,8 @@ $(document).ready(function () {
             $("#new_khoa input[name=id]").val(id);
             var ten = $("#ten_"+id).text();
             $("#new_khoa input[name=khoa]").val(ten);
-            var mota = $("#mota_"+id).text();
-            $("#new_khoa textarea[name=he]").val(mota);
+            var he = $("#he_"+id).text();
+            $("#new_khoa textarea[name=he]").val(he);
             $('#change_khoa_title').html("Chỉnh sửa khóa")
             $("#save_new_khoa").html("Chỉnh sửa");
         }else{

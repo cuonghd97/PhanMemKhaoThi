@@ -58,7 +58,7 @@ $(document).ready(function(){
         var id = $("#new_student  input[name=id]").val();
         var token = $("#new_student input[name=csrfmiddlewaretoken]").val();
         var fullname = $("#new_student input[name=fullname]").val();
-        var tuoi= $("#new_student input[name=tuoi]").val();
+        var ngaysinh = $("#new_student input[name=ngaysinh]").val();
         var ma= $("#new_student input[name=masv]").val();
         var donvi ='';
         $("#ls option").each(function(){
@@ -74,7 +74,7 @@ $(document).ready(function(){
         $.ajax({
                 type:'POST',
                 url:location.href,
-                data: {'csrfmiddlewaretoken':token,'id' : id, 'kieu':kieu, 'fullname': fullname, 'tuoi': tuoi,
+                data: {'csrfmiddlewaretoken':token,'id' : id, 'kieu':kieu, 'fullname': fullname, 'ngaysinh': ngaysinh,
                 'donvi': donvi, 'ma':ma},
                 success: function(){
                     $("#new_student").modal("hide");
@@ -140,13 +140,10 @@ $(document).ready(function(){
             var data = e.target.result;
             if(!rABS) data = new Uint8Array(data);
 
-            var wb = XLSX.read(data, {type: rABS ? 'binary' : 'array'});
+            var wb = XLSX.read(data, {type: rABS ? 'binary' : 'array',cellDates: true, dateNF: 'yyyy/mm/dd;@'});
             var ws = wb.Sheets[wb.SheetNames[0]];
-            result = XLSX.utils.sheet_to_json(ws, {header:1});
-//            wb.SheetNames.forEach(function(sheetName) {
-//                var roa = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1});
-//                if(roa.length) result[sheetName] = roa;
-//            });
+
+            result = XLSX.utils.sheet_to_json(ws,{header:1});
 
         };
         if(rABS) reader.readAsBinaryString(f); else reader.readAsArrayBuffer(f);

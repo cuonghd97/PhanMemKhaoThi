@@ -14,6 +14,7 @@ cd PhanMemKhaoThi
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 sudo pip3 install -r requirement.txt
+apt update && apt install -y libsm6 libxext6
 sudo apt-get install libgtk2.0-0
 ```
 

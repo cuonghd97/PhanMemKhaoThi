@@ -36,4 +36,6 @@ urlpatterns = [
   path('thong_ke_ki_thi_hoanthi/<int:kithi>', views.thongke_kithi_hoanthi, name = 'thongke_hoanthi'),
   path('manage_add_kithi/', views.manage_add_kithi),
   path('download/<str:pathdoc>',views.download),
+  path('profile/',views.profile,name = 'profile'),
+  path('profile/update/',views.updateprofile),
 ]
