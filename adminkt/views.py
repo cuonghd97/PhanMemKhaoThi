@@ -17,13 +17,13 @@ from CoiThi.models import *
 # Create your views here.
 def home(request):
     user = request.user
-    content = {'username': user.username}
+    content = {'username': user.tenCanBo}
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
     return render(request, 'adminkt/index.html',content)
 def profile(request):
     user = request.user
-    content = {'username': user.username}
+    
     data = {'id': request.user.id}
     data.update({'username': request.user.tenCanBo})
     data.update({'tencanbo': request.user.tenCanBo})
@@ -70,7 +70,7 @@ def manage_class(request):
                         l.save()
                     except:
                         pass
-        content = {'username': user.username, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all(),'ds_sinhvien':SinhVien.objects.all(),'ds_lop':LopHoc.objects.all()}
+        content = {'username': user.tenCanBo, 'ds_khoa': KhoaHoc.objects.all(), 'mon' : Mon.objects.all(),'ds_sinhvien':SinhVien.objects.all(),'ds_lop':LopHoc.objects.all()}
         return render(request, 'adminkt/manager_lop.html', content)
     else:
         return HttpResponseRedirect('/')
@@ -168,7 +168,7 @@ def manage_donvi(request):
                         l.save()
                     except:
                         pass
-        content = {'username': user.username}
+        content = {'username': user.tenCanBo}
         return render(request, 'adminkt/manager_donvi.html', content)
     else:
         return HttpResponseRedirect('/')
@@ -245,7 +245,7 @@ def manage_khoa_data(request):
 
 def manage_mon(request):
     user = request.user
-    content = {'username':user.username}
+    content = {'username':user.tenCanBo}
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
@@ -291,7 +291,7 @@ def manage_mon_data(request):
 
 def manage_hocvien(request):
     user = request.user
-    content = {'username': user.username, 'ds_donvi': DonVi.objects.all()}
+    content = {'username': user.tenCanBo, 'ds_donvi': DonVi.objects.all()}
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
@@ -367,7 +367,7 @@ def manage_hocvien_data(request):
 
 def manager_canbo(request):
     user = request.user
-    content = {'username':user.username, 'ds_donvi':DonVi.objects.all()}
+    content = {'username':user.tenCanBo, 'ds_donvi':DonVi.objects.all()}
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
@@ -476,42 +476,42 @@ def kithi(request):
 
 def thongke(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongke.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_coi(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongkecoi.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_thanhtoan(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongkethanhtoancoithi.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_truot(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongkekithi.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_vipham(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongkekithi_vipham.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_hoanthi(request):
     user = request.user
-    content = {'username':user.username,'kithi':KyThi.objects.all()}
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongkekithi_hoanthi.html', content)
     else:
@@ -804,7 +804,7 @@ def thongke_thanhtoan_coi(request,kithi):
 
 def manager_kithi(request):
     user = request.user
-    content = {'username': user.username,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}
+    content = {'username': user.tenCanBo,'ds_cb':CanBo.objects.all(),'ds_lop':LopHoc.objects.all(),'ds_kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
