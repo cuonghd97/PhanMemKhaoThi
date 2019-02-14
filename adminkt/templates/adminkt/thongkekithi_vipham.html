@@ -182,11 +182,17 @@ Trang quản lý
           'csrfmiddlewaretoken': token,
           'kithi': kithi
         },
+        beforeSend:function(){ 
+          $('#load').attr("style","display:block");
+        },
         success: function (data) {
           get_data(kithi);
           $('#loading-image').hide();
           $('#download').attr("href", "/adminkt/download/" + data.download);
           $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP')
+        },
+        complete:function(){
+          $('#load').attr("style","display:none");
         },
       });
     });

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <!-- Meta, title, CSS, favicons, etc. -->
@@ -22,130 +23,138 @@
 
   <!-- Custom Theme Style -->
   <link href="{% static 'build/css/custom.min.css' %}" rel="stylesheet">
+  <link href="{% static 'build/css/custom.css' %}" rel="stylesheet">
 
-  
+
 </head>
-<body>
-    <body class="nav-md">
-        <div class="container body">
-          <div class="main_container">
-            <div class="col-md-3 left_col">
-              <div class="left_col scroll-view">
-                <div class="navbar nav_title" style="border: 0;">
-                  <a href="javascrip:void()" class="site_title"><i class="fa fa-paw"></i> <span>ADMIN!</span></a>
-                </div>
-                <div class="clearfix"></div>
-                <!-- menu profile quick info -->
-                <div class="profile clearfix">
-                  <div class="profile_pic">
-                    <img src="{% static '/images/img.jpg' %}" alt="..." class="img-circle profile_img">
-                  </div>
-                  <div class="profile_info">
-                    <span>Xin chào,</span>
-                    <h2>{{username}}</h2>
-                  </div>
-                </div>
-                <!-- /menu profile quick info -->
-                <br />
-                <!-- sidebar menu -->
-                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                  <div class="menu_section">
-                    <h3>Danh mục chính</h3>
-                    <ul class="nav side-menu">
-                      <li>
-                          <a href="{% url 'adminkt:manage_khoa' %}"><i class="fa fa-bank"></i> Quản lý khoa
-                          </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:manage_donvi' %}"><i class="fa fa-user-plus"></i> Quản lý đơn vị
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:manage_mon' %}"><i class="fa fa-book"></i> Quản lý môn
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:manage_hocvien' %}"><i class="fa fa-users"></i> Quản lý học viên
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:quanly_canbo' %}"><i class="fa fa-home"></i> Quản lý cán bộ
-                        </a>
-                    </li>
-                      <li>
-                        <a href="{% url 'adminkt:manage_lop' %}"><i class="fa fa-home"></i> Quản lý lớp
-                        </a>
-                      </li>
-                      <li>
-                        <a href="{% url 'adminkt:quanly_kithi' %}"><i class="fa fa-desktop"></i> Quản lý kì thi
-                        </a>
-                      </li>
-                      <li>
-                        <a><i class="fa fa-bar-chart-o"></i> Thống kê
-                          <span class="fa fa-chevron-down"></span></a>
-                          <ul class="nav child_menu">
-                            <li><a href="{% url 'adminkt:thongke' %}">Thống kê chấm thi</a></li>
-                            <li><a href="{% url 'adminkt:thongkecoi' %}">Thống kê coi thi</a></li>
-                            <li><a href="{% url 'adminkt:thongke_kithi_truot' %}">Thống kê trượt trong kì thi</a></li>
-                            <li><a href="{% url 'adminkt:thongke_kithi_vipham' %}">Thống kê vi phạm trong kì thi</a></li>
-                            <li><a href="{% url 'adminkt:thongke_kithi_hoanthi' %}">Thống kê hoãn thi trong kì thi</a></li>
-                            <li><a href="{% url 'adminkt:thongkethanhtoancoi' %}">Thống kê thanh toán coi thi</a></li>
-                          </ul>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <!-- /sidebar menu -->
-              </div>
-            </div>
-    
-            <!-- top navigation -->
-            <div class="top_nav">
-              <div class="nav_menu">
-                <nav>
-                  <div class="nav toggle">
-                    <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-                  </div>
-    
-                  <ul class="nav navbar-nav navbar-right">
-                    <li class="">
-                      <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <img src="{% static '/images/img.jpg' %}" alt="">{{username}}
-                        <span class=" fa fa-angle-down"></span>
-                      </a>
-                      <ul class="dropdown-menu dropdown-usermenu pull-right">
-                        <li><a href="{% url 'adminkt:profile' %}"> Profile</a></li>
-                        <li><a href="{% url 'CoiThi:logout' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-            <!-- /top navigation -->
-    
-            <!-- page content -->
-            <div class="right_col" role="main">
-                {% block body %}
 
-                {% endblock body %}
-          
+<body>
+
+  <body class="nav-md">
+    <div class="container body">
+      <!-- <div class="loading">Loading&#8230;</div> -->
+      <div class="main_container">
+        <div class="loading" id="load" style="display:none">
+          <div></div>
+          <img src="{% static '/build/images/loader.gif' %}">
+        </div>
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="javascrip:void()" class="site_title"><i class="fa fa-paw"></i> <span>ADMIN!</span></a>
             </div>
-            <!-- /page content -->
-    
-            <!-- footer content -->
-            <footer>
-              <div class="pull-right">
-                <h4>Phần mềm khảo thí</h4>
+            <div class="clearfix"></div>
+            <!-- menu profile quick info -->
+            <div class="profile clearfix">
+              <div class="profile_pic">
+                <img src="{% static '/images/img.jpg' %}" alt="..." class="img-circle profile_img">
               </div>
-              <div class="clearfix"></div>
-            </footer>
-            <!-- /footer content -->
+              <div class="profile_info">
+                <span>Xin chào,</span>
+                <h2>{{username}}</h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+            <br />
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <h3>Danh mục chính</h3>
+                <ul class="nav side-menu">
+                  <li>
+                    <a href="{% url 'adminkt:manage_khoa' %}"><i class="fa fa-bank"></i> Quản lý khoa
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:manage_donvi' %}"><i class="fa fa-user-plus"></i> Quản lý đơn vị
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:manage_mon' %}"><i class="fa fa-book"></i> Quản lý môn
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:manage_hocvien' %}"><i class="fa fa-users"></i> Quản lý học viên
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:quanly_canbo' %}"><i class="fa fa-home"></i> Quản lý cán bộ
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:manage_lop' %}"><i class="fa fa-home"></i> Quản lý lớp
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'adminkt:quanly_kithi' %}"><i class="fa fa-desktop"></i> Quản lý kì thi
+                    </a>
+                  </li>
+                  <li>
+                    <a><i class="fa fa-bar-chart-o"></i> Thống kê
+                      <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="{% url 'adminkt:thongke' %}">Thống kê chấm thi</a></li>
+                      <li><a href="{% url 'adminkt:thongkecoi' %}">Thống kê coi thi</a></li>
+                      <li><a href="{% url 'adminkt:thongke_kithi_truot' %}">Thống kê trượt trong kì thi</a></li>
+                      <li><a href="{% url 'adminkt:thongke_kithi_vipham' %}">Thống kê vi phạm trong kì thi</a></li>
+                      <li><a href="{% url 'adminkt:thongke_kithi_hoanthi' %}">Thống kê hoãn thi trong kì thi</a></li>
+                      <li><a href="{% url 'adminkt:thongkethanhtoancoi' %}">Thống kê thanh toán coi thi</a></li>
+                    </ul>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- /sidebar menu -->
           </div>
         </div>
-      </body>
-  
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="{% static '/images/img.jpg' %}" alt="">{{username}}
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="{% url 'adminkt:profile' %}"> Profile</a></li>
+                    <li><a href="{% url 'CoiThi:logout' %}"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+          {% block body %}
+
+          {% endblock body %}
+
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            <h4>Phần mềm khảo thí</h4>
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+  </body>
+
   <!--JS-->
   <!-- jQuery -->
   <script src="{% static 'vendors/jquery/dist/jquery.min.js' %}"></script>
@@ -178,4 +187,5 @@
   {% block js %}
   {% endblock js %}
 </body>
+
 </html>

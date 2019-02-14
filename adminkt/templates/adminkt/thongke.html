@@ -147,11 +147,16 @@ Trang quản lý
           'csrfmiddlewaretoken': token,
           'kithi': kithi
         },
-
+        beforeSend:function(){ 
+          $('#load').attr("style","display:block");
+        },
         success: function (data){
         get_data();
         $('#download').attr("href", "/adminkt/download/" + data.download);
-      },
+        
+        },complete:function(){
+          $('#load').attr("style","display:none");
+        },
 
     });
   });

@@ -4,7 +4,25 @@ html , body{
  height:100%;
 
 }
-
+.loading{
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    text-align: center; 
+    display: none;
+}
+.loading div{
+    background-color: #000;
+    opacity: 0.2;height: 100%;
+    width: 100%; position: absolute;
+}
+.loading img{
+    margin-top:15%;z-index: 10000; width: 50px;height: 50px;
+}
 /* dat du lieu o giua the td */
 .tdcenter {
     text-align: center;

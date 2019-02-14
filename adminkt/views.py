@@ -422,7 +422,6 @@ def manager_canbo(request):
                         gv.save()
                     except:
                         continue
-
         return render(request, 'adminkt/manager_canbo.html', content)
     else:
         return HttpResponseRedirect('/')

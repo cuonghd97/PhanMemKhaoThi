@@ -186,9 +186,8 @@ Trang quản lý
           'csrfmiddlewaretoken': token,
           'kithi': kithi
         },
-        beforeSend: function () {
-          // Show image container
-          $("#loader").show();
+        beforeSend:function(){ 
+          $('#load').attr("style","display:block");
         },
         success: function (data) {
           get_data();
@@ -199,10 +198,9 @@ Trang quản lý
           $('#sohocvien').html('Có ' + data.sohocvien + ' học viên dự thi KTHP')
 
         },
-        complete: function (data) {
-          // Hide image container
-          $("#loader").hide();
-        }
+        complete:function(){
+          $('#load').attr("style","display:none");
+        },
       });
     });
 
