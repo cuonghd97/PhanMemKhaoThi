@@ -82,14 +82,17 @@
         element = ``
         $.each(bailam, function (key, value) {
           var ans
-          if (value == 1) {
+          if (value == 'A') {
             ans = 'A'
-          } else if (value == 2) {
+          } else if (value == 'B') {
             ans = 'B'
-          } else if (value == 3) {
+          } else if (value == 'C') {
             ans = 'C'
-          } else {
+          } else if(value == 'D') {
             ans = 'D'
+          }
+          else{
+            ans = ""
           }
 
           element +=
@@ -104,11 +107,11 @@
         element = ``
         $.each(dapan, function (key, value) {
           var ans
-          if (value == 1) {
+          if (value == 'A') {
             ans = 'A'
-          } else if (value == 2) {
+          } else if (value == 'B') {
             ans = 'B'
-          } else if (value == 3) {
+          } else if (value == 'C') {
             ans = 'C'
           } else {
             ans = 'D'

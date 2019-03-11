@@ -10,6 +10,7 @@ from django.core.serializers import serialize
 from . import models
 import datetime
 import opticalmarkmedi
+from . import test_chose
 # sudo pip install xlrd
 import xlrd
 # Create your views here.
@@ -278,34 +279,68 @@ def ChamDiem(request):
 def ChamTuDong(request, a):
   data = {'id': a}
   data.update({'name': request.user.tenCanBo})
+  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
+  data.update({'kithi':kyThiHienTai})
   return render(request, 'chamtudong.html', data)
+def Chamtudongdiem(request):
+  idLop = request.POST['idlop']
+  idSV = request.POST['idsv']
+  SV = models.ChiTietLop.objects.filter(maLop = idLop).filter(maSinhVien = idSV).first()
+  # SV.diem = request.POST.getlist('bailam')
+  print(request.POST.get('bailam'))
+  # dataBl = test_chose.auto_mark(request.POST.getlist('bailam'))
+  # d = json.loads(dataBl)
+  # print(d)
+  # source = models.DapAn.objects.get(id=1)
+  # excelfilename = source.dapAn.path
+  # workbook = xlrd.open_workbook(excelfilename)
+  # worksheet = workbook.sheet_by_index(0)
+  # num_rows = worksheet.nrows
+  # num_cols = worksheet.ncols
+  # data = {}
+  # for r in range(num_rows):
+  #   key = str(worksheet.cell_value(r, 0)).replace('.0', '')
+  #   value = worksheet.cell_value(r, 1)
+  #   if value == 'A':
+  #     ans = 'A'
+  #   elif value == 'B':
+  #     ans = 'B'
+  #   elif value == 'C':
+  #     ans = 'C'
+  #   else:
+  #     ans = 'D'
+  #   data.update({key: ans})
 
+  # dem = 0
+  # for item in data:
+  #   if str(d[item]) == str(data[item]):
+  #     dem += 1
+  # diem = {'diem': dem*0.25}
+  # SV.save()
+  return HttpResponse('done')
+      
 # Upload file de cham thi
 def uploadBaiThi(request):
   if request.method == "POST":
     listDapAn = request.FILES.getlist('danhsachdapan')
-    listBaiThi = request.FILES.getlist('danhsachbaithi')
   dapAn = models.DapAn()
   dapAn.dapAn = listDapAn[0]
-  dapAn.maDe = 'de'
-  # dapAn.save()
-
-  baiThi = models.BaiThi()
-  baiThi.baiLam = listBaiThi[0]
-  # baiThi.save()
-  return render(request, 'diem.html')
+  dapAn.maDe = request.POST.get("made")
+  dapAn.makithi = models.KyThi.objects.get(tenKyThi = request.POST['tenkithi'])
+  dapAn.save()
+  return HttpResponse(dapAn.makithi)
 
 # Diem
 def xemdien(request):
   datajson = []
 
-  bl = models.BaiThi.objects.get(id=1)
+  bl = models.BaiThi.objects.get(id=2)
   fileimg = bl.baiLam.path
-
-  dataBl = opticalmarkmedi.auto_mark(fileimg)
+  dataBl = test_chose.auto_mark(fileimg)
   d = json.loads(dataBl)
-  datajson.append(d)
 
+  datajson.append(d)
   source = models.DapAn.objects.get(id=1)
   excelfilename = source.dapAn.path
   workbook = xlrd.open_workbook(excelfilename)
@@ -317,20 +352,20 @@ def xemdien(request):
     key = str(worksheet.cell_value(r, 0)).replace('.0', '')
     value = worksheet.cell_value(r, 1)
     if value == 'A':
-      ans = 1
+      ans = 'A'
     elif value == 'B':
-      ans = 2
+      ans = 'B'
     elif value == 'C':
-      ans = 3
+      ans = 'C'
     else:
-      ans = 4
+      ans = 'D'
     data.update({key: ans})
 
   dem = 0
   for item in data:
-    if int(d[item]) == int(data[item]):
+    if str(d[item]) == str(data[item]):
       dem += 1
-  diem = {'diem': dem}
+  diem = {'diem': dem*0.25}
   datajson.append(data)
   datajson.append(diem)
   return JsonResponse(datajson, safe=False)

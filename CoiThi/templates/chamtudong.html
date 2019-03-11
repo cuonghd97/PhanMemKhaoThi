@@ -29,31 +29,24 @@
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            <br />
-            <form id="file-form" data-parsley-validate class="form-horizontal form-label-left" method="POST" enctype="multipart/form-data" action="/upload-baithi/">
-              {% csrf_token %}
-              <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nhập đáp án <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="file" id="danhsachdapan" required="required" class="form-control col-md-7 col-xs-12" accept=".xls, .xlsx" name="danhsachdapan">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Chọn danh sách bài thi <span class="required">*</span>
-                </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                  <input type="file" id="danhsachbaithi" required="required" class="form-control col-md-7 col-xs-12" name="danhsachbaithi" accept=".JPG, .PNG">
-                </div>
-              </div>
-              <div class="ln_solid"></div>
-              <div class="form-group">
-                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                  <button class="btn btn-primary" type="reset">Reset</button>
-                  <button type="submit" class="btn btn-success">Submit</button>
-                </div>
-              </div>
-            </form>
+            <table id="" class="table table-striped table-bordered danhsachsinhvien">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Tên sinh viên</th>
+                  <th>Mã sinh viên</th>
+                  <th>Môn thi</th>
+                  <th>Đơn vị</th>
+                  <th>Trạng thái</th>
+                  <th>Lý do</th>
+                  <th>Ghi chú</th>
+                  <th>Điểm</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -63,7 +56,83 @@
 <!-- /page content -->
 {% endblock pagecontent %}
 {% block js %}
-<!-- jQuery Smart Wizard -->
-<script src="{% static 'vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js' %}"></script>
-<script src="{% static 'build/js/canbo/checkchamtudong.js' %}"></script>
+
+  <script>
+    $(document).ready(function() {
+      id = '{{ id }}'
+      var table = $('.danhsachsinhvien').DataTable({
+        paging: false,
+        destroy: true,
+          "ajax": {
+              "type": "GET",
+              "url": "/data-sv/" + id,
+              "dataSrc": "",
+              "async": "false"
+          },
+          "columns": [
+              {
+                "data": "no"
+              },
+              {
+                "data": "tensinhvien"
+              },
+              {
+                "data": "masinhvien",
+              },
+              {
+                "data": "monhoc"
+              },
+              {
+                "data": "tendonvi"
+              },
+              {
+                "data": "trangthai"
+              },
+              {
+                "data": "lydo"
+              },
+              {
+                "data": "ghichu"
+              }
+          ],
+          "columnDefs":[
+            {
+              "targets": 8,
+              "width": "10%",
+              "data": null,
+              "defaultContent":`{% csrf_token %}<input type='file' class='form-control diem' />`
+            }
+          ],
+          createdRow: function(row, data, dataIndex) {
+            $(row).find('.diem').attr('data-idsv', data["idsv"]).attr('data-idmon', data['mamon']).attr('id', 'cham').attr('data-idlop', data['idlop'])
+          },
+      })
+    
+      $('.danhsachsinhvien').on('change', 'input', function(e) {
+        var idsv = $(this).data('idsv')
+        console.log(idsv)
+        var idlop = $(this).data('idlop')
+        console.log(idlop)
+        var bailam = $(this)[0].files;
+        console.log(bailam)
+        if (bailam.length > 0) {
+          $.ajax({
+            type: 'POST',
+            url: 'post-bailam/',
+            data: {
+              'idsv': idsv,
+              'idlop': idlop,
+              'bailam': bailam,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function() {
+              console.log("success !")
+            }
+          })
+        } else {
+
+        }
+      })
+    })
+  </script>
 {% endblock js %}

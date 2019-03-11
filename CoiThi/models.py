@@ -76,6 +76,8 @@ class ChiTietLop(models.Model):
   lyDo = models.TextField(max_length=200, null=True)
   ghiChu = models.TextField(max_length=200, null=True)
   soBaoDanh = models.CharField(max_length=100, null=True)
+  maDe = models.CharField(max_length=100, null=True)
+  baiLam = models.FileField(upload_to='BaiLam',null=True)
 
   class Meta:
     managed = True
@@ -133,16 +135,7 @@ class ChamThi(models.Model):
 class DapAn(models.Model):
   maDe = models.CharField(max_length=100, null=True)
   dapAn = models.FileField(upload_to='DapAn')
-
+  makithi = models.ForeignKey(KyThi, models.SET_NULL,null=True)
   class Meta:
     managed = True
     db_table = 'dap_an'
-
-# Bang bai thi
-class BaiThi(models.Model):
-  maDe = models.CharField(max_length=100, null=True)
-  baiLam = models.FileField(upload_to='BaiLam')
-
-  class Meta:
-    managed = True
-    db_table = 'bai_thi'
