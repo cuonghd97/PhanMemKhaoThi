@@ -84,14 +84,14 @@ def manage_class_data(request):
             khoa = '<p id="khoa_{}">{} - {}</p>'.format(lop.id, lop.maKhoa.tenKhoaHoc,lop.maKhoa.he)
             mon = '<p id="mon_{}">{}</p>'.format(lop.id, lop.maMon.tenMon)
             hs = '''
-            {1}  <i class="fa fa-info-circle" data-title="{0}" data-toggle="modal" data-target="#detail_student"></i>
+            {1}  <i class="fa fa-list" data-title="{0}" data-toggle="modal" data-target="#detail_student" title = "Danh sách lớp"></i>
             '''.format(lop.tenLop,ChiTietLop.objects.filter(maLop_id = lop.id).count())
             options = '''
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
+                    <button type="button" class="btn btn-info" data-toggle="modal" title="Chỉnh sửa" data-target="#new_class" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
                     </button>
-                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                    <button type="button" class="btn btn-danger" title="Xóa" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                     </button>
                 </div>
@@ -125,6 +125,7 @@ def manage_student_data(request,lop):
             ls_student = ChiTietLop.objects.filter(maLop__in = ls_chi_tiet)
             now = datetime.datetime.now()
             yearnow = now.year 
+            lop = LopHoc.objects.get(tenLop=lop).id
             for student in ls_student:
                 fullname = '<p id="full_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.tenSinhVien)
                 username = '<p id="user_{0}">{1}</p>'.format(student.maSinhVien.id, student.maSinhVien.maSinhVien)
@@ -134,11 +135,14 @@ def manage_student_data(request,lop):
                 diem = '<p id="diem_{0}">{1}</p>'.format(student.maSinhVien.id, student.diem)
                 option = '''
                     <div class="btn-group">
-                        <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                        <button type="button" class="btn btn-info log" data-toggle="modal" title="Lịch sử chỉnh sửa" data-target="#log_student" data-lop="{1}" data-hocvien="{0}" data-title="log" id="log_{0}">
+                            <i class="fa fa-history" data-toggle="tooltip" title="Lịch sử chỉnh sửa"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" title="Xóa" data-title="del" id="del_{0}">
                             <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                         </button>
                     </div>
-                '''.format(student.id)
+                '''.format(student.id,lop)
                 data.append([fullname, username,tuoi,capham,diem,option])
         except:
             pass
@@ -156,7 +160,6 @@ def manage_donvi(request):
                 # nien_khoa, nam = request.POST['nien_khoa'].split(" - ")
                 if request.POST['kieu'] == 'new':
                     try:
-                        print(request.POST['ma'])
                         DonVi.objects.create(tenDonVi=request.POST['ten'],maDonVi=request.POST['ma'])
                     except:
                         pass
@@ -182,10 +185,10 @@ def manage_donvi_data(request):
             Madv = '<p id="ma_{}">{}</p>'.format(dv.id, dv.maDonVi)
             options = '''
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
+                    <button type="button" class="btn btn-info" title="Chỉnh sửa" data-toggle="modal" data-target="#new_class" data-title="edit" id="edit_{0}">
                         <i class="fa fa-cog" data-toggle="tooltip" title="Chỉnh sửa"></i>
                     </button>
-                    <button type="button" class="btn btn-danger" data-title="del" id="del_{0}">
+                    <button type="button" class="btn btn-danger" title="Xóa" data-title="del" id="del_{0}">
                         <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                     </button>
                 </div>
@@ -364,6 +367,24 @@ def manage_hocvien_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
+def log_hocvien_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        data = []
+        json_data= []
+        try:
+            ls_log = ChiTietLop.objects.filter(maLop = LopHoc.objects.get(id=request.POST['lop'])).filter(maSinhVien = SinhVien.objects.get(id=request.POST['hocvien']))
+            for log in ls_log:
+                for log_diem in log.log_sua_diem.all():
+                    fullname = '<p id="full_name">{0}</p>'.format(SinhVien.objects.get(id=request.POST['hocvien']).tenSinhVien)
+                    diemCu = '<p id="diemcu">{}</p>'.format(log_diem.diemCu)
+                    diemMoi = '<p id="diemmoi">{}</p>'.format(log_diem.diemMoi)
+                    ngaysua = '<p id="ngaysua">{}</p>'.format(log_diem.ngaySua)
+                    nguoisua = '<p id="nguoisua">{}</p>'.format(log_diem.nguoiSua.tenCanBo)
+                    data.append([fullname, diemCu, diemMoi, ngaysua, nguoisua])
+        except:
+            pass
+        return JsonResponse(data,safe=False)
 
 def manager_canbo(request):
     user = request.user
@@ -743,7 +764,6 @@ def thongke_thanhtoan_coi(request,kithi):
                 lis.append(pt.canBoCoi1.id)
                 lis.append(pt.canBoCoi2.id)
             for x in set(lis):
-                # print ('{0}-{1}'.format(x,lis.count(x)))
                 row_cells = table.add_row().cells
                 a = a + 1
                 row_cells[0].text = str(a)

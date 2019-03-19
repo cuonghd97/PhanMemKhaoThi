@@ -40,9 +40,7 @@
                   <th>Trạng thái</th>
                   <th>Lý do</th>
                   <th>Ghi chú</th>
-                  <th>Điểm</th>
-                  <th>Bài làm</th>
-                  
+                  <th>Mã Phách</th>
                 </tr>
               </thead>
               <tbody>
@@ -67,7 +65,7 @@
         destroy: true,
           "ajax": {
               "type": "GET",
-              "url": "/data-sv-cham-tu-dong/" + id,
+              "url": "/data-sv-phach/" + id,
               "dataSrc": "",
               "async": "false"
           },
@@ -95,44 +93,38 @@
               },
               {
                 "data": "ghichu"
-              },
-              {
-                "data": "diem"
               }
           ],
           "columnDefs":[
             {
-              "targets": 9,
+              "targets": 8,
               "width": "10%",
               "data": null,
-              "defaultContent":`{% csrf_token %}<input type='file' class='form-control diem' />`
+              "defaultContent":`{% csrf_token %}<input type='text' class='form-control phach' />`
             }
           ],
           createdRow: function(row, data, dataIndex) {
-            $(row).find('.diem').attr('data-idsv', data["idsv"]).attr('data-idmon', data['mamon']).attr('id', 'cham').attr('data-idlop', data['idlop'])
+            $(row).find('.phach').attr('data-idsv', data["idsv"]).attr('data-idmon', data['mamon']).attr('id', 'cham').attr('data-idlop', data['idlop']).val(data['phach'])
           },
       })
-    
-      $('.danhsachsinhvien').on('change', 'input', function(e) {
-        var formData = new FormData();
-        formData.append('csrfmiddlewaretoken',$("input[name=csrfmiddlewaretoken]").val());
+
+      $('.danhsachsinhvien').on('blur', 'input', function(e) {
         var idsv = $(this).data('idsv')
         var idlop = $(this).data('idlop')
-        var bailam = $(this)[0].files;
-        formData.append('idsv',idsv);
-        formData.append('idlop',idlop);
-        console.log($(this)[0].files[0])
-        $(this).prop('readonly',true);
-        formData.append('bailam',$(this)[0].files[0]);
-        if (bailam.length > 0) {
+        var phach = $(this).val()
+        if (phach != '') {
+          $(this).attr('readonly',true);
           $.ajax({
             type: 'POST',
-            url: 'post-bailam/',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(data) {
-              $("#diem_"+idsv).html(data.diem);
+            url: 'post-phach/',
+            data: {
+              'idsv': idsv,
+              'idlop': idlop,
+              'phach': phach,
+              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function() {
+              $(this).attr('readonly',true);
             }
           })
         } else {

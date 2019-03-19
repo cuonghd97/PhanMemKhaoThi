@@ -67,17 +67,29 @@ class LopHoc(models.Model):
     managed = True
     db_table = 'lop_hoc'
 
+class Log_diem(models.Model):
+  diemCu = models.FloatField(default=0)
+  diemMoi = models.FloatField(default=0)
+  nguoiSua = models.ForeignKey(CanBo, models.SET_NULL, related_name='nguoisua', null=True)
+  ngaySua = models.DateField(default=timezone.now)
+  lyDoSua = models.TextField(max_length=300, null=True)
+  class Meta:
+    managed = True
+    db_table = 'log_diem'
+
 # Bảng Chi Tiết Lớp
 class ChiTietLop(models.Model):
   maLop = models.ForeignKey(LopHoc, models.CASCADE, null=True)
   maSinhVien = models.ForeignKey(SinhVien, models.CASCADE, null=True)
-  diem = models.IntegerField(default=0)
+  diem = models.FloatField(default=0)
   trangThai = models.TextField(max_length=200, null=True)
   lyDo = models.TextField(max_length=200, null=True)
   ghiChu = models.TextField(max_length=200, null=True)
   soBaoDanh = models.CharField(max_length=100, null=True)
   maDe = models.CharField(max_length=100, null=True)
-  baiLam = models.FileField(upload_to='BaiLam',null=True)
+  baiLam = models.FileField(upload_to='BaiLam/',null=True)
+  maPhach = models.CharField(max_length = 30,null = True)
+  log_sua_diem = models.ManyToManyField(Log_diem,related_name='log_sua_diem',db_table='log_sua_diem')
 
   class Meta:
     managed = True
@@ -139,3 +151,4 @@ class DapAn(models.Model):
   class Meta:
     managed = True
     db_table = 'dap_an'
+

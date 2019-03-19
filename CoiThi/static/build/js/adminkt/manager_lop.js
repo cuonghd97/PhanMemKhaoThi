@@ -28,14 +28,34 @@ $(document).ready(function(){
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "displayLength": 10,
     });
-
+      $('#myTable').DataTable()
+    $("#log_student").on('show.bs.modal', function(event){
+        var button = $(event.relatedTarget);
+        var lop = button.data('lop');
+        var hocvien = button.data('hocvien');
+        var token = $("input[name=csrfmiddlewaretoken]").val();
+        $.ajax({
+            type:'POST',
+            url:'/adminkt/log_hocvien_data/',
+            data: {'csrfmiddlewaretoken':token,'lop':lop, 'hocvien':hocvien},
+            success: function(data){
+                $('#list_log').DataTable({
+                    data:data,
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    "displayLength": 10,
+                    
+                }).destroy();
+            }
+        });
+        // table_log.ajax.url("/adminkt/log_hocvien_data/data_" + title).load();
+    });
     $("#detail_student").on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
         var title = button.data('title');
         $("#detail_student_title").text("Chi tiết lớp "+title);
         table_student.ajax.url("/adminkt/manage_student/data_" + title).load();
     });
-
+    
     $("#list_class").on('click', '.btn-danger', function(){
         var id = $(this).attr('id').split('_')[1];
         var token = $("input[name=csrfmiddlewaretoken]").val();

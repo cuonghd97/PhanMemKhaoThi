@@ -19,6 +19,7 @@ urlpatterns = [
   path('manage_kithi/data_<str:kithi>', views.manage_ki_thi_data),
   path('manage_hocvien/', views.manage_hocvien, name = 'manage_hocvien'),
   path('manage_hocvien_data/', views.manage_hocvien_data),
+  path('log_hocvien_data/', views.log_hocvien_data),
   path('quan_ly_ki_thi_data/', views.manage_kithi_data),
   path('manage_can_bo/', views.manager_canbo, name = 'quanly_canbo'),
   path('manage_can_bo_data/', views.manage_canbo_data),

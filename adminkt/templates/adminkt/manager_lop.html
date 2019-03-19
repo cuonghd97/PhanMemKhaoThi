@@ -164,29 +164,37 @@ Quản lý lớp
       </div>
     </div>
   </div>
-<!-- <div class="modal" id="new_class_multi" role="dialog">
+<div class="modal" id="log_student" role="dialog">
   <div class="modal-dialog">
    
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Nhập dữ liệu theo mẫu dưới</h4>
+        <h4 class="modal-title">Lịch sử sửa điểm</h4>
       </div>
       <div class="modal-body">
-        <img style="border: 1px solid; border-radius: 10px;" src="{% static '/image/class.PNG' %}" width="100%">
-        <br>
-        <br>
-        <input type="file" name="file" id="file" class="form-control">
+        <table class="table table-striped jambo_table bulk_action" id="list_log" width="100%">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Điểm cũ</th>
+              <th>Điểm mới</th>
+              <th>Ngày sửa</th>
+              <th>Người sửa</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
         <div class="clearfix"></div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="create_new_class_multi">Upload</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
-</div> -->
+</div>
 {% endblock body %}
 {% block js %}
   <script src="{% static 'build/js/adminkt/xlsx.full.min.js' %}"></script>
