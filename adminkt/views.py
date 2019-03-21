@@ -367,6 +367,54 @@ def manage_hocvien_data(request):
         big_data = {"data": data}
         json_data = json.loads(json.dumps(big_data))
         return JsonResponse(json_data)
+def thongkehocvien_data(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        data = []
+        try:
+            ls_student = SinhVien.objects.all()
+            now = datetime.datetime.now()
+            yearnow = now.year
+            for sv in ls_student:
+                fullname = '<p id="full_{0}">{1}</p>'.format(sv.id, sv.tenSinhVien)
+                masv = '<p id="ma_{}">{}</p>'.format(sv.id,sv.maSinhVien)
+                tuoisv = yearnow - sv.ngaySinh.year
+                tuoi = '<p id="tuoi_{}">{}</p>'.format(sv.id,tuoisv)
+                donvi = '<p id="donvi_{0}">{1}</p>'.format(sv.id,sv.maDonVi.tenDonVi)
+                options = '''
+                    <div class="btn-group">
+                        <button type="button" title="Thống kê điểm" class="thong_ke btn btn-info" data-toggle="modal" data-idsv = {0} data-target="#thongke" data-title="thongke" id="thongke_{0}">
+                            <i class="fa fa-line-chart" data-toggle="tooltip" ></i>
+                        </button>
+                    </div>
+                '''.format(sv.id)
+                data.append([fullname, masv, tuoi, donvi, options])
+        except:
+            pass
+        big_data = {"data": data}
+        json_data = json.loads(json.dumps(big_data))
+        return JsonResponse(json_data)
+def thongkehocvien_data_diem(request):
+    user = request.user
+    if user.is_authenticated and user.position == 0:
+        data = []
+        json_data= []
+        try:
+            ls_diem = ChiTietLop.objects.filter(maSinhVien__in = request.POST['idsv'])
+            now = datetime.datetime.now()
+            i = 1
+            for diem in ls_diem:
+                stt = i
+                mon_hoc =  LopHoc.objects.get(id = diem.maLop.id).maMon.tenMon
+                
+                monhoc = '<p id="mon">{0}</p>'.format(mon_hoc)
+                diem_thi = '<p id="diem">{0}</p>'.format(diem.diem)
+                data.append([stt, monhoc, diem_thi])
+                i += 1
+        except:
+            pass
+        
+        return JsonResponse(data,safe=False)
 def log_hocvien_data(request):
     user = request.user
     if user.is_authenticated and user.position == 0:
@@ -499,6 +547,20 @@ def thongke(request):
     content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
     if user.is_authenticated and user.position == 0:
         return render(request, 'adminkt/thongke.html', content)
+    else:
+        return HttpResponseRedirect('/')
+def thongkehocvien(request):
+    user = request.user
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        return render(request, 'adminkt/thongkesinhvien.html', content)
+    else:
+        return HttpResponseRedirect('/')
+def thongketheolop(request):
+    user = request.user
+    content = {'username':user.tenCanBo,'kithi':KyThi.objects.all()}
+    if user.is_authenticated and user.position == 0:
+        return render(request, 'adminkt/thongketheolop.html', content)
     else:
         return HttpResponseRedirect('/')
 def thongke_coi(request):

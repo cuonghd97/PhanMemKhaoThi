@@ -65,8 +65,6 @@ def DataKyThi(request):
 def DataPhong(request, idKyThi):
   datas = []
   try:
-    # ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
-    # kyThiHienTai = models.KyThi.objects.get(id = idKyThi)
     danhSachPhongThi = models.PhongThi.objects.filter(maKyThi = idKyThi)
     for item in danhSachPhongThi:
       if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
@@ -159,22 +157,13 @@ def dataSV(request, idPhong):
     data = {}
     i = i + 1
 
-    # data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
     ngayHienTai = datetime.datetime.now().date()
     ngaySinh = item.maSinhVien.ngaySinh
     tuoi = ngayHienTai - ngaySinh
-    diem =  '''<p id = "diem_{0}" readonly></p>'''.format(item.maSinhVien.id)
-    # data.update({'tuoi': int(tuoi.days / 365.25)})
-    # data.update({'tendonvi': item.maSinhVien.maDonVi.tenDonVi})
-    # data.update({'masinhvien': item.maSinhVien.maSinhVien})
+    diem =  '''<p id = "diem_{0}" readonly></p>'''.format(item.maSinhVien.id) 
     data.update({'idsv': item.maSinhVien.id})
-    # data.update({'trangthai': item.trangThai})
-    # data.update({'lydo': item.lyDo})
-    # data.update({'ghichu': item.ghiChu})
-    # data.update({'diem': item.diem})
     data.update({'no': i})
     data.update({'idlop': Lop.id})
-    # data.update({'mamon': Lop.maMon.id})
     data.update({'phach': item.maPhach})
     data.update({'diem': diem})
     datas.append(data)

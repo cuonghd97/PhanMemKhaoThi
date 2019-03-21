@@ -1,0 +1,141 @@
+{% extends 'adminkt/base.html' %}
+{% block title %}
+Trang quản lý
+{% endblock title %}
+{% load staticfiles %}
+{% block body %}
+
+<div class="">
+  <div class="page-title">
+    <div class="title_left">
+      <h3>Thống kê điểm học viên theo lớp</h3>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <div class="col-md-3">
+            {% csrf_token %}
+            <input list="lskithi" type="text" class="form-control has-feedback-left" name="tenkithi" required
+              placeholder="Tên kì thi">
+            <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+            <datalist id="lskithi">
+              {% for k in kithi %}
+              <option data-kt="{{k.id}}">{{k.tenKyThi}}</option>
+              {% endfor %}
+            </datalist>
+
+          </div>
+          <button class="btn btn-round btn-primary" onclick="PrintElem()" style="float:right;">
+            <i class="fa fa-print"></i> Print
+          </button>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="rows dulieu">
+            <div class="rows" style="text-align: center">
+            <!-- <div class="rows" id="ngay" style="text-align: right">
+                    <div class="col-md-12" >
+                    <i>Hà nội, ngày 30 tháng 10 năm 2018</i>
+                    </div>
+                  </div> -->
+            <!-- <div class="rows" style="text-align: center;" id = "Tieude">
+                    <div class="col-md-12" >
+                          <br><b>THỐNG KÊ COI THI KẾT THÚC HỌC PHẦN</b>
+                          <br>
+                          <p>Năm học: 2017 – 2018</p>
+                    </div>
+                  </div> -->
+            <div class="clearfix"></div>
+            <div class="rows">
+              <div class="col-md-12">
+                <table id="example" class="table table-striped table-bordered dataTable no-footer dtr-inline" role="grid"
+                  aria-describedby="datatable-buttons_info" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>TT</th>
+                      <th>Môn</th>
+                      <th>Ngày thi</th>
+                      <th>Môn thi</th>
+                      <th>Hình thức thi</th>
+                      <th>Số điểm</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    function get_data(kithi) {
+      $('#example').DataTable({
+        "ajax": {
+          "type": "GET",
+          "url": '/adminkt/thong_ke_ki_thi/' + kithi,
+          "contentType": "application/json; charset=utf-8",
+          "data": function (result) {
+            return JSON.stringify(result);
+          },
+        },
+        searching: false, paging: false, info: false,
+        "destroy": true,
+      });
+    }
+    $('input[name=tenkithi]').on('change', function () {
+      // $('#example').DataTable().clear().draw();
+      var token = $("input[name=csrfmiddlewaretoken]").val();
+      kithi = '';
+      $("#lskithi option").each(function () {
+        if ($("input[name=tenkithi]").val() == $(this).val()) {
+          kithi = $(this).data("kt");
+          return false;
+        }
+      });
+      if (kithi == '') {
+        alert("Kì thi không chính xác");
+        return false;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/adminkt/thong_ke_ki_thi/' + kithi,
+        data: {
+          'csrfmiddlewaretoken': token,
+          'kithi': kithi
+        },
+        beforeSend:function(){ 
+          $('#load').attr("style","display:block");
+        },
+        success: function (data) {
+          get_data(kithi);
+          $('#loading-image').hide();
+          $('#download').attr("href", "/adminkt/download/" + data.download);
+          $('#sohocvien').html('Có ' + data.so + ' học viên trượt KTHP')
+        },
+        complete:function(){
+          $('#load').attr("style","display:none");
+        },
+      });
+    });
+
+  });
+  function PrintElem() {
+    $("body").first().html($(".dulieu").html());
+    window.print();
+    location.reload();
+    return true;
+  }
+</script>
+{% endblock js %}
