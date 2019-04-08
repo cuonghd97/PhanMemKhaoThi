@@ -13,6 +13,7 @@ urlpatterns = [
   path('data-phong/<int:idKyThi>', views.DataPhong),
   path('danh-sach-phong/<int:idKyThi>', views.DanhSachPhong, name='danhsachphong'),
   path('data-sv/<int:idPhong>', views.dataSV),
+  path('data-sv-coi-thi/<int:idPhong>', views.dataSV_coithi),
   path('data-sv-cham-tu-dong/<int:idPhong>', views.dataSVtudong),
   path('data-sv-phach/<int:idPhong>', views.data_SV_Phach),
   path('danh-sach-phong/phong/<int:idPhong>', views.DanhSachSV),

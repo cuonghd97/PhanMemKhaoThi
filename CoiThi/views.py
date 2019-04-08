@@ -9,6 +9,7 @@ import json
 from django.core.serializers import serialize
 from . import models
 import datetime
+from datetime import datetime,date
 import opticalmarkmedi
 from . import test_chose
 # sudo pip install xlrd
@@ -47,15 +48,15 @@ def DanhSachKyThi(request):
 def DataKyThi(request):
   datas = []
   i = 0
-  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  ngayHienTai = datetime.today().strftime('%Y-%m-%d')
   kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
   for item in kyThiHienTai:
     data = {}
     i = i + 1
     data.update({'makythi': item.id})
     data.update({'tenkythi': item.tenKyThi})
-    data.update({'ngaybatdau': item.ngayBatDau})
-    data.update({'ngayketthuc': item.ngayKetThuc})
+    data.update({'ngaybatdau': item.ngayBatDau.strftime('%d-%m-%Y')})
+    data.update({'ngayketthuc': item.ngayKetThuc.strftime('%d-%m-%Y')})
     data.update({'no': i})
 
     datas.append(data)
@@ -157,7 +158,7 @@ def dataSV(request, idPhong):
     data = {}
     i = i + 1
 
-    ngayHienTai = datetime.datetime.now().date()
+    ngayHienTai = datetime.now().date()
     ngaySinh = item.maSinhVien.ngaySinh
     tuoi = ngayHienTai - ngaySinh
     diem =  '''<p id = "diem_{0}" readonly></p>'''.format(item.maSinhVien.id) 
@@ -168,6 +169,35 @@ def dataSV(request, idPhong):
     data.update({'diem': diem})
     datas.append(data)
   return JsonResponse(datas, safe=False)
+
+def dataSV_coithi(request, idPhong):
+  datas = []
+  Lop = models.PhongThi.objects.get(id = idPhong).maLop
+  phong = models.PhongThi.objects.get(id = idPhong)
+  phong.role = 0
+  phong.save()
+  DSSV = models.ChiTietLop.objects.filter(maLop = Lop.id)
+  i = 0
+  now = datetime.now()
+  yearnow = now.year  
+  for item in DSSV:
+    data = {}
+    i = i + 1
+    diem =  '''<p id = "diem_{0}" readonly></p>'''.format(item.maSinhVien.id) 
+    data.update({'masinhvien': item.maSinhVien.maSinhVien})
+    data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
+    tuoisv = yearnow - item.maSinhVien.ngaySinh.year
+    data.update({'tuoi': tuoisv})
+    data.update({'trangthai': item.trangThai})
+    data.update({'lydo': item.lyDo})
+    data.update({'ghichu': item.ghiChu})
+    data.update({'no': i})
+    data.update({'idlop': Lop.id})
+    data.update({'phach': item.maPhach})
+    data.update({'diem': diem})
+    datas.append(data)
+  return JsonResponse(datas, safe=False)
+
 def data_SV_Phach(request, idPhong):
   datas = []
   Lop = models.PhongThi.objects.get(id = idPhong).maLop
@@ -182,7 +212,7 @@ def data_SV_Phach(request, idPhong):
     i = i + 1
 
     data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
-    ngayHienTai = datetime.datetime.now().date()
+    ngayHienTai = datetime.now().date()
     ngaySinh = item.maSinhVien.ngaySinh
     tuoi = ngayHienTai - ngaySinh
     data.update({'tuoi': int(tuoi.days / 365.25)})
@@ -215,7 +245,7 @@ def dataSVtudong(request, idPhong):
     i = i + 1
 
     data.update({'tensinhvien': item.maSinhVien.tenSinhVien})
-    ngayHienTai = datetime.datetime.now().date()
+    ngayHienTai = datetime.now().date()
     ngaySinh = item.maSinhVien.ngaySinh
     tuoi = ngayHienTai - ngaySinh
     diem =  '''<p id = "diem_{0}" readonly></p>'''.format(item.maSinhVien.id)
@@ -241,9 +271,8 @@ def DanhSachSV(request, idPhong):
 
   thoiGian = models.PhongThi.objects.get(id = idPhong).gio.strftime('%H:%M')
   thoiGianThi = models.PhongThi.objects.get(id = idPhong).thoiGianThi
-  ngayThi = models.PhongThi.objects.get(id = idPhong).ngayThi.strftime('%Y-%m-%d')
+  ngayThi = models.PhongThi.objects.get(id = idPhong).ngayThi.strftime('%d-%m-%Y')
   tenmon = models.PhongThi.objects.get(id = idPhong).maLop.maMon.tenMon
-
   data.update({'thoigian': thoiGian})
   data.update({'thoigianthi': thoiGianThi})
   data.update({'ngaythi': ngayThi})
@@ -251,31 +280,25 @@ def DanhSachSV(request, idPhong):
   data.update({'idPhong': idPhong})
   data.update({'name': request.user.tenCanBo})
   return render(request, 'danhsachsinhvien.html', data)
-
 # Cap nhat thong tin coi thi
 def updateCoiThi(request):
   data = {}
-  a = request.POST['idphong']
-
-  thoiGian = models.PhongThi.objects.get(id = a).gio.strftime('%H:%M')
-  thoiGianThi = models.PhongThi.objects.get(id = a).thoiGianThi
-  ngayThi = models.PhongThi.objects.get(id = a).ngayThi.strftime('%Y-%m-%d')
-
+  id_phong = request.POST['idphong']
+  thoiGian = models.PhongThi.objects.get(id = id_phong).gio.strftime('%H:%M')
+  thoiGianThi = models.PhongThi.objects.get(id = id_phong).thoiGianThi
+  ngayThi = models.PhongThi.objects.get(id = id_phong).ngayThi.strftime('%Y-%m-%d')
   data.update({'thoigian': thoiGian})
   data.update({'thoigianthi': thoiGianThi})
   data.update({'ngaythi': ngayThi})
-  data.update({'id': a})
-
+  data.update({'id': id_phong})
   if request.method == 'POST':
     masinhvien = request.POST['masinhvien']
     trangthai = request.POST['trangthai']
     lydo = request.POST['lydo']
     ghichu = request.POST['ghichu']
-
-    idPhong = models.PhongThi.objects.get(id = request.POST['idphong']).maLop.id
-    lopID = models.LopHoc.objects.filter(maMon = request.POST['mamon']).first().id
+    idMaLop = models.PhongThi.objects.get(id = request.POST['idphong']).maLop.id
     idSV = models.SinhVien.objects.filter(maSinhVien = masinhvien).first().id
-    lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).filter(maLop = lopID).first()
+    lop = models.ChiTietLop.objects.filter(maSinhVien = idSV).filter(maLop = idMaLop).first()
     if trangthai == '0':
       lop.trangThai = ''
     elif trangthai == '1':
@@ -352,7 +375,7 @@ def NhapPhach(request):
 def ChamTuDong(request, a):
   data = {'id': a}
   data.update({'name': request.user.tenCanBo})
-  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  ngayHienTai = datetime.today().strftime('%Y-%m-%d')
   kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
   data.update({'kithi':kyThiHienTai})
   return render(request, 'chamtudong.html', data)
@@ -389,7 +412,7 @@ def Chamtudongdiem(request):
   for item in data:
     if str(d[item]) == str(data[item]):
       dem += 1
-  diemthi = dem*0.25
+  diemthi = round(dem*0.2,3)
   data = {'diem': diemthi}
   SV.diem = diemthi
   SV.save()
@@ -399,7 +422,7 @@ def Chamtudongdiem(request):
 # Upload file de cham thi
 def ds_dapan(request):
   data = {'name': request.user.tenCanBo}
-  ngayHienTai = datetime.datetime.today().strftime('%Y-%m-%d')
+  ngayHienTai = datetime.today().strftime('%Y-%m-%d')
   kyThiHienTai = models.KyThi.objects.filter(ngayKetThuc__gte = ngayHienTai, ngayBatDau__lte = ngayHienTai)
   data.update({'kithi':kyThiHienTai})
   return render(request, 'danhsachdapan.html', data)

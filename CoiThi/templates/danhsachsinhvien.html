@@ -34,8 +34,7 @@
                   <th>Tuổi</th>
                   <th>Trạng thái</th>
                   <th>Lý Do</th>
-                  <th>Ghi chú</th>
-                  <th>Điểm</th>
+                  <th>Ghi chú</th>            
                   <th>Chỉnh sửa</th>
                 </tr>
               </thead>
@@ -149,7 +148,7 @@
         destroy: true,
         "ajax":{
           "type": "get",
-          "url": "/data-sv/" + idPhong,
+          "url": "/data-sv-coi-thi/" + idPhong,
           "dataSrc": "",
         },
         "columns": [
@@ -173,14 +172,11 @@
           },
           {
             "data": "ghichu"
-          },
-          {
-            "data": "diem"
           }
         ],
         "columnDefs": [
           {
-            "targets": 8,
+            "targets": 7,
             "data": null,
             "defaultContent": `
               <button id="btnedit" class="btn btn-primary">Chỉnh sửa</button>
@@ -196,6 +192,7 @@
         $('#masinhvien').val(data['masinhvien'])
         $('#id').val(data['id'])
         $('#mamon').val(data['mamon'])
+        
         $(this).attr('data-toggle', 'modal').attr('data-target', '#exampleModal')
       })
 
@@ -205,6 +202,7 @@
         var lydo = $('#lydo').val()
         var ghichu = $('#ghichu').val()
         var idphong = idPhong
+        console.log(idPhong)
         var mamon = $('#mamon').val()
 
         $.ajax ({
