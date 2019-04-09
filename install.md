@@ -23,6 +23,7 @@ sudo apt-get install libgtk2.0-0
 - cài đặt `sudo apt-get install -y mysql-server` (điền mật khẩu cho tài khoản root)
 - đăng nhập vào mysql: `mysql -u root -p` (nhập mật khẩu đã tạo lúc dài đặt)
 - tạo database: `CREATE DATABASE PhanMemKhaoThi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+- SET pass for 8.* SET GLOBAL validate_password_policy=LOW;
 - tạo tài khoản: `CREATE USER 'khaothi'@'%' IDENTIFIED BY '123456';`
 - phân quyền: `GRANT ALL PRIVILEGES ON PhanMemKhaoThi . * TO 'khaothi'@'%';`
 - cập nhật: `FLUSH PRIVILEGES;`
