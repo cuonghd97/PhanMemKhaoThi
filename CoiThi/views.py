@@ -460,3 +460,30 @@ def danhsachdethi(request):
     i += 1
     datajson.append(data)
   return JsonResponse(datajson, safe=False)
+
+def profile(request):
+    user = request.user
+    
+    data = {'id': request.user.id}
+    data.update({'username': request.user.tenCanBo})
+    data.update({'tencanbo': request.user.tenCanBo})
+    if not request.user.is_authenticated:
+        return redirect('CoiThi:login')
+    return render(request, 'adminkt/profile.html',data)
+def updateprofile(request):
+    matkhaumoi = request.POST['matkhaumoi']
+    mknhaplai = request.POST['nhaplaimatkhau']
+    username = request.user.username
+    idcanbo = request.POST['idcanbo']
+    if request.POST['nhaplaimatkhau'] != 'notnull':
+        request.user.set_password(matkhaumoi)
+        request.user.tenCanBo = request.POST['ten']
+
+        request.user.save()
+
+    request.user.tenCanBo = request.POST['ten']
+
+    request.user.save()
+    CanBo = authenticate(username = username, password = matkhaumoi)
+    login(request, CanBo)
+    return HttpResponse('done')

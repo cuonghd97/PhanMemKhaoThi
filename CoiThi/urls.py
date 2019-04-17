@@ -29,5 +29,6 @@ urlpatterns = [
   path('danh-sach-dap-an/', views.ds_dapan ,name = "list-dapan"),
   path('upload-dapan/', views.uploadBaiThi,name = "upload-dapan"),
   path('danh-sach-de-thi/', views.danhsachdethi),
-
+  path('profile/',views.profile,name = 'profile'),
+  path('profile/update/',views.updateprofile),
 ]
