@@ -121,7 +121,6 @@
         var bailam = $(this)[0].files;
         formData.append('idsv',idsv);
         formData.append('idlop',idlop);
-        console.log($(this)[0].files[0])
         $(this).prop('readonly',true);
         formData.append('bailam',$(this)[0].files[0]);
         if (bailam.length > 0) {
@@ -133,6 +132,28 @@
             processData: false,
             success: function(data) {
               $("#diem_"+idsv).html(data.diem);
+              if(data.status == 200){
+                new PNotify({
+                  title: 'Thông báo',
+                  text: data.msg,
+                  type: 'success',
+                  hide: true,
+                  styling: 'bootstrap3',
+                  sticker: true,
+                  delay:1000
+              });
+              }
+              else if(data.status == 404){
+              new PNotify({
+                  title: 'Thông báo',
+                  text: data.msg,
+                  type: 'error',
+                  hide: true,
+                  styling: 'bootstrap3',
+                  sticker: true,
+                  delay:1000
+              });
+            }
             }
           })
         } else {

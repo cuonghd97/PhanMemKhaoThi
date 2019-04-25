@@ -1,12 +1,17 @@
-{% extends 'adminkt/base.html' %}
+{% extends 'base.html' %}
 {% block title %}
 Trang quản lý
 {% endblock title %}
 {% load staticfiles %}
-{% block body %}
+{% block name %}
+{{ username }}
+{% endblock name %}
+
+{% block pagecontent %}
 <link rel="stylesheet" href="{% static 'build/css/chamtay.css' %}">
 
 <!-- page content -->
+<div class="right_col" role="main">
 <div class="">
     <div class="page-title">
         <div class="title_left">
@@ -89,7 +94,8 @@ Trang quản lý
         </div>
     </div>
 </div>
-{% endblock body %}
+</div>
+{% endblock pagecontent %}
 {% block js %}
 <script src="{% static 'vendors/moment/min/moment.min.js' %}"></script>
 <!-- bootstrap-datetimepicker -->

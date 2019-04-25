@@ -66,7 +66,7 @@ def DataKyThi(request):
 def DataPhong(request, idKyThi):
   datas = []
   try:
-    danhSachPhongThi = models.PhongThi.objects.filter(maKyThi = idKyThi)
+    danhSachPhongThi = models.PhongThi.objects.filter(maKyThi = idKyThi).order_by('-ngayThi')
     for item in danhSachPhongThi:
       if request.user.id == item.canBoCoi1.id or request.user.id == item.canBoCoi2.id:
         data = {}
@@ -271,7 +271,7 @@ def DanhSachSV(request, idPhong):
 
   thoiGian = models.PhongThi.objects.get(id = idPhong).gio.strftime('%H:%M')
   thoiGianThi = models.PhongThi.objects.get(id = idPhong).thoiGianThi
-  ngayThi = models.PhongThi.objects.get(id = idPhong).ngayThi.strftime('%d-%m-%Y')
+  ngayThi = models.PhongThi.objects.get(id = idPhong).ngayThi.strftime('%Y-%m-%d')
   tenmon = models.PhongThi.objects.get(id = idPhong).maLop.maMon.tenMon
   data.update({'thoigian': thoiGian})
   data.update({'thoigianthi': thoiGianThi})
@@ -371,7 +371,6 @@ def NhapPhach(request):
   SV.save()
   return HttpResponse('done')
 
-
 def ChamTuDong(request, a):
   data = {'id': a}
   data.update({'name': request.user.tenCanBo})
@@ -382,13 +381,24 @@ def ChamTuDong(request, a):
 def Chamtudongdiem(request):
   idLop = request.POST['idlop']
   idSV = request.POST['idsv']
+  nguoisua = CanBo.objects.get(id=request.user.id)
   SV = models.ChiTietLop.objects.filter(maLop = idLop).filter(maSinhVien = idSV).first()
+  diemcu = SV.diem
   SV.baiLam = request.FILES.get('bailam')
   SV.save()
   dataBl = test_chose.auto_mark(SV.baiLam.path)
   made = test_chose.auto_mark2(SV.baiLam.path)
   d = json.loads(dataBl)
-  source = models.DapAn.objects.get(maDe=made)
+  try:
+    source = models.DapAn.objects.get(maDe=made)
+  except:
+    data = {'diem': 0,'msg':'Mã đề không phù hợp','status': 404}
+    SV.log_sua_diem.create(diemCu = diemcu,diemMoi = 0,nguoiSua = nguoisua,lyDoSua = 'Sai đề thi')
+    SV.diem = 0
+    SV.save()
+    return JsonResponse(data)
+  # source = models.DapAn.objects.get(maDe=made)
+  print(source)
   excelfilename = source.dapAn.path
   workbook = xlrd.open_workbook(excelfilename)
   worksheet = workbook.sheet_by_index(0)
@@ -413,10 +423,10 @@ def Chamtudongdiem(request):
     if str(d[item]) == str(data[item]):
       dem += 1
   diemthi = round(dem*0.2,3)
-  data = {'diem': diemthi}
+  data = {'diem': diemthi,'msg':'Chấm thành công','status':200}
   SV.diem = diemthi
+  SV.log_sua_diem.create(diemCu = diemcu,diemMoi = diemthi,nguoiSua = nguoisua)
   SV.save()
-  print(SV.diem)
   return JsonResponse(data)
       
 # Upload file de cham thi
@@ -463,13 +473,13 @@ def danhsachdethi(request):
 
 def profile(request):
     user = request.user
-    
+
     data = {'id': request.user.id}
     data.update({'username': request.user.tenCanBo})
     data.update({'tencanbo': request.user.tenCanBo})
     if not request.user.is_authenticated:
         return redirect('CoiThi:login')
-    return render(request, 'adminkt/profile.html',data)
+    return render(request, 'profile.html',data)
 def updateprofile(request):
     matkhaumoi = request.POST['matkhaumoi']
     mknhaplai = request.POST['nhaplaimatkhau']

@@ -142,7 +142,7 @@ def manage_student_data(request,lop):
                             <i class="fa fa-trash" data-toggle="tooltip" title="Xóa"></i>
                         </button>
                     </div>
-                '''.format(student.id,lop)
+                '''.format(student.maSinhVien.id,lop)
                 data.append([fullname, username,tuoi,capham,diem,option])
         except:
             pass
@@ -330,7 +330,7 @@ def manage_hocvien(request):
                         SinhVien.objects.create(tenSinhVien=stu[0],
                                             maSinhVien =stu[1],
                                             ngaySinh= datetime.datetime.strptime(stu[2], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d'),
-                                            maDonVi=DonVi.objects.get(id = stu[3]))
+                                            maDonVi=DonVi.objects.get(maDonVi = stu[3]))
                     except:
                         continue
         return render(request, 'adminkt/manager_hocvien.html', content)
@@ -400,7 +400,7 @@ def thongkehocvien_data_diem(request):
         data = []
         json_data= []
         try:
-            ls_diem = ChiTietLop.objects.filter(maSinhVien__in = request.POST['idsv'])
+            ls_diem = ChiTietLop.objects.filter(maSinhVien = request.POST['idsv'])
             now = datetime.datetime.now()
             i = 1
             for diem in ls_diem:
@@ -422,8 +422,9 @@ def log_hocvien_data(request):
         json_data= []
         try:
             ls_log = ChiTietLop.objects.filter(maLop = LopHoc.objects.get(id=request.POST['lop'])).filter(maSinhVien = SinhVien.objects.get(id=request.POST['hocvien']))
+            print(ls_log)
             for log in ls_log:
-                for log_diem in log.log_sua_diem.all():
+                for log_diem in log.log_sua_diem.all().order_by('-ngaySua'):
                     fullname = '<p id="full_name">{0}</p>'.format(SinhVien.objects.get(id=request.POST['hocvien']).tenSinhVien)
                     diemCu = '<p id="diemcu">{}</p>'.format(log_diem.diemCu)
                     diemMoi = '<p id="diemmoi">{}</p>'.format(log_diem.diemMoi)
@@ -1289,6 +1290,7 @@ def thongke_kithi_vipham(request,kithi):
     if user.is_authenticated and user.position == 0:
         data = []
         a = 0
+        file = ''
         try:
             ls_kt = KyThi.objects.get(id = kithi)
             ls_pt = PhongThi.objects.filter(maKyThi = ls_kt)
