@@ -71,7 +71,7 @@ class Log_diem(models.Model):
   diemCu = models.FloatField(default=0)
   diemMoi = models.FloatField(default=0)
   nguoiSua = models.ForeignKey(CanBo, models.SET_NULL, related_name='nguoisua', null=True)
-  ngaySua = models.DateField(default=timezone.now)
+  ngaySua = models.DateTimeField(auto_now_add=True)
   lyDoSua = models.TextField(max_length=300, null=True)
   class Meta:
     managed = True

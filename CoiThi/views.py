@@ -9,11 +9,12 @@ import json
 from django.core.serializers import serialize
 from . import models
 import datetime
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
 import opticalmarkmedi
 from . import test_chose
 # sudo pip install xlrd
 import xlrd
+
 # Create your views here.
 
 # Redirect login
@@ -273,13 +274,21 @@ def DanhSachSV(request, idPhong):
   thoiGianThi = models.PhongThi.objects.get(id = idPhong).thoiGianThi
   ngayThi = models.PhongThi.objects.get(id = idPhong).ngayThi.strftime('%Y-%m-%d')
   tenmon = models.PhongThi.objects.get(id = idPhong).maLop.maMon.tenMon
-  data.update({'thoigian': thoiGian})
-  data.update({'thoigianthi': thoiGianThi})
-  data.update({'ngaythi': ngayThi})
-  data.update({'tenmon': tenmon})
-  data.update({'idPhong': idPhong})
-  data.update({'name': request.user.tenCanBo})
-  return render(request, 'danhsachsinhvien.html', data)
+  gio_hien_tai = datetime.now()
+  str_bat_dau = ngayThi + " "+thoiGian
+  gio_bat_dau = datetime.strptime(str_bat_dau, "%Y-%m-%d %H:%M")
+  gio_ket_thuc = gio_bat_dau + timedelta(minutes=thoiGianThi)
+  if gio_hien_tai >= gio_bat_dau and gio_hien_tai <= gio_ket_thuc:
+    data.update({'thoigian': thoiGian})
+    data.update({'thoigianthi': thoiGianThi})
+    data.update({'ngaythi': ngayThi})
+    data.update({'tenmon': tenmon})
+    data.update({'idPhong': idPhong})
+    data.update({'name': request.user.tenCanBo})
+    return render(request, 'danhsachsinhvien.html', data)
+  else:
+    return render(request,'error_404.html')
+        
 # Cap nhat thong tin coi thi
 def updateCoiThi(request):
   data = {}
@@ -497,3 +506,4 @@ def updateprofile(request):
     CanBo = authenticate(username = username, password = matkhaumoi)
     login(request, CanBo)
     return HttpResponse('done')
+

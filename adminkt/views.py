@@ -107,13 +107,15 @@ def manage_add_student(request):
             if 'delete' in request.POST:
                 ChiTietLop.objects.get(id=request.POST['delete']).delete()
             elif 'lop' in request.POST:
-
                 if request.POST['kieu'] == 'new':
+                    check_student = ChiTietLop.objects.filter(maLop = LopHoc.objects.get(id = request.POST['lop']) ,maSinhVien=SinhVien.objects.get(id =request.POST['sinhvien'])).first()
+                    if check_student is not None:
+                        return JsonResponse({'msg':'Sinh viên đã có trong lớp','status':401})
                     try:
                         ChiTietLop.objects.create(maLop = LopHoc.objects.get(id = request.POST['lop']) ,maSinhVien=SinhVien.objects.get(id =request.POST['sinhvien']))
                     except:
                         pass
-        return JsonResponse({'status':'succsec'})
+        return JsonResponse({'msg':'Thêm thành công','status':200})
     else:
         return HttpResponseRedirect('/')
 def manage_student_data(request,lop):
@@ -428,7 +430,7 @@ def log_hocvien_data(request):
                     fullname = '<p id="full_name">{0}</p>'.format(SinhVien.objects.get(id=request.POST['hocvien']).tenSinhVien)
                     diemCu = '<p id="diemcu">{}</p>'.format(log_diem.diemCu)
                     diemMoi = '<p id="diemmoi">{}</p>'.format(log_diem.diemMoi)
-                    ngaysua = '<p id="ngaysua">{}</p>'.format(log_diem.ngaySua)
+                    ngaysua = '<p id="ngaysua">{}</p>'.format(log_diem.ngaySua.strftime('%H:%M:%S %d-%m-%Y'))
                     nguoisua = '<p id="nguoisua">{}</p>'.format(log_diem.nguoiSua.tenCanBo)
                     data.append([fullname, diemCu, diemMoi, ngaysua, nguoisua])
         except:
@@ -975,12 +977,24 @@ def manage_add_kithi(request):
     if user.is_authenticated and user.position == 0:
         if request.method == 'POST':
             if 'delete' in request.POST:
-                PhongThi.objects.get(id=request.POST['delete']).delete()
+                try:
+                    PhongThi.objects.get(id=request.POST['delete']).delete()
+                except:
+                    return JsonResponse({'msg':'Có lỗi','status':401})
+                return JsonResponse({'msg':'Xóa phòng thi thành công','status':200})
             elif 'lop' in request.POST:
-
                 if request.POST['kieu'] == 'new':
                     try:
-                        PhongThi.objects.create(maKyThi = KyThi.objects.get(id = request.POST['kithi']) ,
+                        check_room = PhongThi.objects.filter(maKyThi = KyThi.objects.get(id = request.POST['kithi']),
+                                                maLop = LopHoc.objects.get(id = request.POST['lop'])).first()
+                    except:
+                        return JsonResponse({'msg':'Có lỗi','status':401})
+
+                    if check_room is not None:
+                        return JsonResponse({'msg':'Lớp đã có trong kì thi','status':401}) 
+
+                    try:
+                        phong_thi = PhongThi.objects.create(maKyThi = KyThi.objects.get(id = request.POST['kithi']) ,
                                                 canBoCoi1=CanBo.objects.get(id =request.POST['cbc1']),
                                                 canBoCoi2=CanBo.objects.get(id =request.POST['cbc2']),
                                                 maLop = LopHoc.objects.get(id = request.POST['lop']),
@@ -991,12 +1005,12 @@ def manage_add_kithi(request):
                                                 hinhThucThi = request.POST['hinhthuc'],
                                                 thoiGianThi = request.POST['thoigian'])
 
-                        ChamThi.objects.create(maPhong = PhongThi.objects.get(tenPhong = request.POST['tenphong']),
+                        ChamThi.objects.create(maPhong = phong_thi,
                                             canBoCham1=CanBo.objects.get(id =request.POST['cbcham1']),
                                            canBoCham2=CanBo.objects.get(id =request.POST['cbcham2']) )
                     except:
-                        pass
-        return JsonResponse({'status':'succsec'})
+                        return JsonResponse({'msg':'Có lỗi','status':401})
+        return JsonResponse({'msg':'Thêm lớp thành công','status':200})
     else:
         return HttpResponseRedirect('/')
 

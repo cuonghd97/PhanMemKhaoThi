@@ -177,9 +177,30 @@ $(document).ready(function(){
             type:'POST',
             url:'/adminkt/manage_add_student/',
             data: {'csrfmiddlewaretoken':token,'kieu':kieu, 'lop':lop, 'sinhvien':sinhvien},
-            success: function(){
+            success: function(data){
                 $("#add_student").modal("hide");
-                // alert('Thêm sinh viên thành công');
+                if(data.status == 200){
+                    new PNotify({
+                        title: 'Thông báo',
+                        text: data.msg,
+                        type: 'success',
+                        hide: true,
+                        styling: 'bootstrap3',
+                        sticker: true,
+                        delay:1500
+                    });
+                }
+                if(data.status == 401){
+                    new PNotify({
+                        title: 'Thông báo',
+                        text: data.msg,
+                        type: 'error',
+                        hide: true,
+                        styling: 'bootstrap3',
+                        sticker: true,
+                        delay:1500
+                    });
+                }
                 table_class.ajax.reload(null,false);
                 
             }

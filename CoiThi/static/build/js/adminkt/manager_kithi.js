@@ -44,8 +44,30 @@ $(document).ready(function() {
                 type:'POST',
                 url:'/adminkt/manage_add_kithi/',
                 data: {'delete':id, 'csrfmiddlewaretoken':token},
-                success: function(){
+                success: function(data){
                     table_room.ajax.reload(null,false);
+                    if(data.status == 200){
+                        new PNotify({
+                            title: 'Thông báo',
+                            text: data.msg,
+                            type: 'success',
+                            hide: true,
+                            styling: 'bootstrap3',
+                            sticker: true,
+                            delay:1500
+                        });
+                    }
+                    if(data.status == 401){
+                        new PNotify({
+                            title: 'Thông báo',
+                            text: data.msg,
+                            type: 'error',
+                            hide: true,
+                            styling: 'bootstrap3',
+                            sticker: true,
+                            delay:1500
+                        });
+                    }
                     $("#quanlykithi").DataTable().ajax.reload(null,false);
                 }
            });
@@ -222,9 +244,30 @@ $(document).ready(function() {
                     'tenphong':tenphong,'vitri':vitri,'ngaythi':ngaythi,'gio':gio,
                     'hinhthuc':hinhthuc,'thoigian':thoiGianthi
                     },
-            success: function(){
+            success: function(data){
                 $("#add_room").modal("hide");
-                // alert('Thêm sinh viên thành công');
+                if(data.status == 200){
+                    new PNotify({
+                        title: 'Thông báo',
+                        text: data.msg,
+                        type: 'success',
+                        hide: true,
+                        styling: 'bootstrap3',
+                        sticker: true,
+                        delay:1500
+                    });
+                }
+                if(data.status == 401){
+                    new PNotify({
+                        title: 'Thông báo',
+                        text: data.msg,
+                        type: 'error',
+                        hide: true,
+                        styling: 'bootstrap3',
+                        sticker: true,
+                        delay:1500
+                    });
+                }
                 $('#quanlykithi').DataTable().ajax.reload(null,false);
                 
             }
