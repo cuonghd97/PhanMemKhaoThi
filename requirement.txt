@@ -1,5 +1,5 @@
 cycler==0.10.0
-Django==2.1.2
+Django==2.2.10
 docx==0.2.4
 imutils==0.5.2
 kiwisolver==1.0.1
