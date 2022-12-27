@@ -15,7 +15,7 @@ python-docx==0.8.10
 pytz==2018.9
 requests==2.9.1
 scipy==1.2.1
-setuptools==40.8.0
+setuptools==65.5.1
 six==1.10.0
 ssh-import-id==5.5
 ufw==0.35
